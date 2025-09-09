@@ -1,7 +1,7 @@
 ﻿using System.Text.RegularExpressions;
 using CSharpFunctionalExtensions;
 
-namespace DirectoryService.Domain.DepartmentEntity.ValueObjects;
+namespace DirectoryService.Domain.Modules.DepartmentEntity.ValueObjects;
 
 public record DepartmentPath
 {

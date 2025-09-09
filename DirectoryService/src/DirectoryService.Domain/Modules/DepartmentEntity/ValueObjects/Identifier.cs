@@ -1,13 +1,11 @@
 ﻿using System.Text.RegularExpressions;
 using CSharpFunctionalExtensions;
+using DirectoryService.Domain.Shared;
 
-namespace DirectoryService.Domain.DepartmentEntity.ValueObjects;
+namespace DirectoryService.Domain.Modules.DepartmentEntity.ValueObjects;
 
 public record Identifier
 {
-
-    private const short MIN_LENGTH = 3;
-    private const short MAX_LENGTH = 150;
 
     private static readonly Regex _latinRegex = new(@"^[A-Za-z]+$", RegexOptions.Compiled);
 
@@ -22,8 +20,12 @@ public record Identifier
     {
         if (string.IsNullOrWhiteSpace(value))
             return Result.Failure<Identifier>("Identifier is required!");
-        if (value.Length < MIN_LENGTH || value.Length > MAX_LENGTH)
-            return Result.Failure<Identifier>($"Name must be between {MIN_LENGTH} and {MAX_LENGTH} length!");
+        if (value.Length < Constants.MIN_DEPARTMENT_ID_LENGTH || value.Length > Constants.MAX_DEPARTMENT_ID_LENGTH)
+        {
+            return Result.Failure<Identifier>(
+                $"Name must be between {Constants.MIN_DEPARTMENT_ID_LENGTH} and {Constants.MAX_DEPARTMENT_ID_LENGTH} length!");
+        }
+
         if (!_latinRegex.IsMatch(value))
             return Result.Failure<Identifier>($"Identifier must contain only latin characters!");
 

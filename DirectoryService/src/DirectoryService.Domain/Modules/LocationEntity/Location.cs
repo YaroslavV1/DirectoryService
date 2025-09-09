@@ -1,30 +1,32 @@
-﻿using DirectoryService.Domain.DepartmentEntity;
-using DirectoryService.Domain.LocationEntity.ValueObjects;
+﻿using DirectoryService.Domain.Modules.DepartmentEntity;
+using DirectoryService.Domain.Modules.LocationEntity.ValueObjects;
+using DirectoryService.Domain.Shared;
 
-namespace DirectoryService.Domain.LocationEntity;
+namespace DirectoryService.Domain.Modules.LocationEntity;
 
-public class Location
+public class Location: Entity<LocationId>
 {
     private readonly List<DepartmentLocation> _departments = [];
 
     //ef core
-    private Location() {
+    private Location(LocationId id)
+    : base(id)
+    {
     }
 
     private Location(
-        Guid locationId,
+        LocationId locationId,
         LocationName locationName,
         Address address,
         LocationTimeZone timeZone)
+    : base(locationId)
     {
-        Id = locationId;
         Name = locationName;
         Address = address;
         TimeZone = timeZone;
         CreatedAt = DateTime.Now;
     }
 
-    public Guid Id { get; }
 
     public LocationName Name { get;  private set; }
 
@@ -41,7 +43,7 @@ public class Location
     public IReadOnlyList<DepartmentLocation> Departments => _departments;
 
     public static Location Create(
-        Guid locationId,
+        LocationId locationId,
         LocationName locationName,
         Address address,
         LocationTimeZone timeZone) => new Location(locationId, locationName, address, timeZone);

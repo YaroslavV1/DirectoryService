@@ -1,26 +1,27 @@
 ﻿using CSharpFunctionalExtensions;
-using DirectoryService.Domain.DepartmentEntity.ValueObjects;
+using DirectoryService.Domain.Modules.DepartmentEntity.ValueObjects;
 
-namespace DirectoryService.Domain.DepartmentEntity;
+namespace DirectoryService.Domain.Modules.DepartmentEntity;
 
-public class Department
+public class Department: Shared.Entity<DepartmentId>
 {
     private readonly List<Department> _childDepartments = [];
     private readonly List<DepartmentPosition> _positions = [];
     private readonly List<DepartmentLocation> _locations = [];
 
     //ef core
-    private Department(){}
+    private Department(DepartmentId id)
+        : base(id) { }
 
     private Department(
-        Guid departmentId,
+        DepartmentId departmentId,
         DepartmentName name,
         Identifier identifier,
         Department? parent,
         DepartmentPath path,
         short depth)
+        : base(departmentId)
     {
-        Id = departmentId;
         Name = name;
         Identifier = identifier;
         ParentId = parent?.ParentId;
@@ -29,8 +30,6 @@ public class Department
         Depth = depth;
         CreatedAt = DateTime.Now;
     }
-
-    public Guid Id { get; }
 
     public DepartmentName Name { get; private set; }
 
@@ -59,7 +58,7 @@ public class Department
 
 
     public static Result<Department> Create(
-        Guid departmentId,
+        DepartmentId departmentId,
         DepartmentName name,
         Identifier identifier,
         Department? parent,
