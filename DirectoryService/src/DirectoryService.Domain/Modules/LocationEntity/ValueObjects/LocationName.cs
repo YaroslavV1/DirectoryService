@@ -16,10 +16,10 @@ public record LocationName
     {
         if (string.IsNullOrEmpty(value))
             return Result.Failure<LocationName>($"Location name cannot be null or empty");
-        if (value.Length < Constants.MIN_LOCATION_NAME_LENGTH && value.Length > Constants.MAX_LOCATION_NAME_LENGTH)
+        if (value.Length < LengthConstants.MIN_LOCATION_NAME && value.Length > LengthConstants.MAX_LOCATION_NAME)
         {
             return Result.Failure<LocationName>(
-                $"Location name must be between {Constants.MIN_LOCATION_NAME_LENGTH} and {Constants.MAX_LOCATION_NAME_LENGTH} characters");
+                $"Location name must be between {LengthConstants.MIN_LOCATION_NAME} and {LengthConstants.MAX_LOCATION_NAME} characters");
         }
 
         return new LocationName(value);

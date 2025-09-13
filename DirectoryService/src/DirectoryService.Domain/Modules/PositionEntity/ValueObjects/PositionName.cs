@@ -16,10 +16,10 @@ public record PositionName
     {
         if (string.IsNullOrWhiteSpace(value))
             return Result.Failure<PositionName>("Position name cannot be empty!");
-        if(value.Length < Constants.MIN_POSITION_NAME_LENGTH && value.Length > Constants.MAX_POSITION_NAME_LENGTH)
+        if(value.Length < LengthConstants.MIN_POSITION_NAME && value.Length > LengthConstants.MAX_POSITION_NAME)
         {
             return Result.Failure<PositionName>(
-                $"Position name must be between {Constants.MIN_POSITION_NAME_LENGTH} and {Constants.MAX_POSITION_NAME_LENGTH} length!");
+                $"Position name must be between {LengthConstants.MIN_POSITION_NAME} and {LengthConstants.MAX_POSITION_NAME} length!");
         }
 
         return new PositionName(value);

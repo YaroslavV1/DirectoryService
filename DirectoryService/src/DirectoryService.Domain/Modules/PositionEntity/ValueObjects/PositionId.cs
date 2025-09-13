@@ -2,7 +2,7 @@
 
 public record PositionId
 {
-    private Guid Value { get; }
+    public Guid Value { get; }
 
     private PositionId(Guid value) => Value = value;
 

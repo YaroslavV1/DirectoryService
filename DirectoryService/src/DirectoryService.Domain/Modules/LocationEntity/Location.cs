@@ -28,11 +28,11 @@ public class Location: Entity<LocationId>
     }
 
 
-    public LocationName Name { get;  private set; }
+    public LocationName Name { get;  private set; } = default!;
 
-    public Address Address { get;  private set; }
+    public Address Address { get;  private set; } = default!;
 
-    public LocationTimeZone TimeZone { get;  private set; }
+    public LocationTimeZone TimeZone { get;  private set; } = default!;
 
     public bool IsActive { get; private set; } = true;
 

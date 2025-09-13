@@ -20,10 +20,10 @@ public record Identifier
     {
         if (string.IsNullOrWhiteSpace(value))
             return Result.Failure<Identifier>("Identifier is required!");
-        if (value.Length < Constants.MIN_DEPARTMENT_ID_LENGTH || value.Length > Constants.MAX_DEPARTMENT_ID_LENGTH)
+        if (value.Length < LengthConstants.MIN_DEPARTMENT_ID || value.Length > LengthConstants.MAX_DEPARTMENT_ID)
         {
             return Result.Failure<Identifier>(
-                $"Name must be between {Constants.MIN_DEPARTMENT_ID_LENGTH} and {Constants.MAX_DEPARTMENT_ID_LENGTH} length!");
+                $"Name must be between {LengthConstants.MIN_DEPARTMENT_ID} and {LengthConstants.MAX_DEPARTMENT_ID} length!");
         }
 
         if (!_latinRegex.IsMatch(value))

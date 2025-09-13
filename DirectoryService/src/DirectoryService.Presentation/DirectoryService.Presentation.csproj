@@ -4,6 +4,7 @@
         <TargetFramework>net9.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+        <UserSecretsId>38ec405b-4c44-47ec-adec-19c9a37bd842</UserSecretsId>
     </PropertyGroup>
 
     <ItemGroup>
@@ -12,7 +13,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\DirectoryService.Infrastructure\DirectoryService.Infrastructure.csproj" />
+      <ProjectReference Include="..\DirectoryService.Infrastructure.PostgreSql\DirectoryService.Infrastructure.PostgreSql.csproj" />
     </ItemGroup>
 
 </Project>

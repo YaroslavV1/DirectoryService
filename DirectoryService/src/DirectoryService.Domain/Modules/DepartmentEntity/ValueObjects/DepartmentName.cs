@@ -16,10 +16,10 @@ public record DepartmentName
     {
         if (string.IsNullOrWhiteSpace(value))
             return Result.Failure<DepartmentName>("Name is required!");
-        if (value.Length <= Constants.MIN_DEPARTMENT_NAME_LENGTH && value.Length >= Constants.MAX_DEPARTMENT_NAME_LENGTH)
+        if (value.Length <= LengthConstants.MIN_DEPARTMENT_NAME && value.Length >= LengthConstants.MAX_DEPARTMENT_NAME)
         {
             return Result.Failure<DepartmentName>(
-                $"Name must be between {Constants.MIN_DEPARTMENT_NAME_LENGTH} and {Constants.MAX_DEPARTMENT_NAME_LENGTH} length!");
+                $"Name must be between {LengthConstants.MIN_DEPARTMENT_NAME} and {LengthConstants.MAX_DEPARTMENT_NAME} length!");
         }
 
         return new DepartmentName(value);

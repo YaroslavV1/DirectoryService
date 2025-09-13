@@ -31,15 +31,15 @@ public class Department: Shared.Entity<DepartmentId>
         CreatedAt = DateTime.Now;
     }
 
-    public DepartmentName Name { get; private set; }
+    public DepartmentName Name { get; private set; } = default!;
 
-    public Identifier Identifier { get; private set; }
+    public Identifier Identifier { get; private set; } = default!;
 
-    public Guid? ParentId { get; private set; }
+    public DepartmentId? ParentId { get; private set; }
 
     public Department? Parent { get; private set; }
 
-    public DepartmentPath Path { get; private set; }
+    public DepartmentPath Path { get; private set; } = default!;
 
     public short Depth { get; private set; }
 
