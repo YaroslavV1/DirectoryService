@@ -12,8 +12,9 @@ public class DepartmentLocationConfiguration : IEntityTypeConfiguration<Departme
     {
         builder.ToTable("department_locations");
 
-        builder.HasKey().HasName("pk_department_location");
-
+        builder.HasKey(dp => new { dp.DepartmentId, dp.LocationId })
+            .HasName("pk_department_locations");
+        
         builder.Property(dl => dl.DepartmentId)
             .HasColumnName("department_id")
             .HasConversion(
