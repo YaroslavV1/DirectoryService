@@ -1,0 +1,47 @@
+﻿using CSharpFunctionalExtensions;
+using DirectoryService.Domain.Modules.DepartmentEntity;
+using DirectoryService.Domain.Modules.PositionEntity.ValueObjects;
+using DirectoryService.Domain.Shared;
+
+namespace DirectoryService.Domain.Modules.PositionEntity;
+
+public class Position: Shared.Entity<PositionId>
+{
+    private readonly List<DepartmentPosition> _departments = [];
+
+    //ef core
+    private Position(PositionId id)
+    : base(id)
+    { }
+
+    private Position(
+        PositionId positionId,
+        PositionName positionName,
+        string description)
+    : base(positionId)
+    {
+        Name = positionName;
+        Description = description;
+        CreatedAt = DateTime.Now;
+    }
+
+    public PositionName Name { get; private set; } = default!;
+
+    public string Description { get; private set; } = default!;
+
+    public bool IsActive { get; private set; } = true;
+
+    public DateTime CreatedAt { get; private set; }
+
+    public DateTime UpdatedAt { get; private set; }
+
+    public IReadOnlyList<DepartmentPosition> Departments => _departments;
+
+    public static Result<Position> Create(PositionId positionId, PositionName positionName, string description)
+    {
+        if (description.Length > LengthConstants.MAX_POSITION_DESCRIPTION)
+            return Result.Failure<Position>($"Description must be less than {LengthConstants.MAX_POSITION_DESCRIPTION} characters!");
+        return new Position(positionId, positionName, description);
+    }
+
+}
