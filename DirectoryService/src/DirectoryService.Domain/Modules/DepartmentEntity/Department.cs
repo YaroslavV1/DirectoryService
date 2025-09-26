@@ -28,7 +28,7 @@ public class Department: Shared.Entity<DepartmentId>
         Parent = parent;
         Path = path;
         Depth = depth;
-        CreatedAt = DateTime.Now;
+        CreatedAt = DateTime.UtcNow;
     }
 
     public DepartmentName Name { get; private set; } = default!;

@@ -22,7 +22,7 @@ public class Position: Shared.Entity<PositionId>
     {
         Name = positionName;
         Description = description;
-        CreatedAt = DateTime.Now;
+        CreatedAt = DateTime.UtcNow;
     }
 
     public PositionName Name { get; private set; } = default!;

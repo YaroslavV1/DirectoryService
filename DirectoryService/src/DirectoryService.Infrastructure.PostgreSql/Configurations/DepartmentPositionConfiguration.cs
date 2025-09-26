@@ -11,10 +11,10 @@ public class DepartmentPositionConfiguration : IEntityTypeConfiguration<Departme
     public void Configure(EntityTypeBuilder<DepartmentPosition> builder)
     {
         builder.ToTable("department_positions");
-        
+
         builder.HasKey(dp => new { dp.DepartmentId, dp.PositionId })
             .HasName("pk_department_positions");
-        
+
         builder.Property(dl => dl.DepartmentId)
             .HasColumnName("department_id")
             .HasConversion(
