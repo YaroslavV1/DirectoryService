@@ -32,7 +32,7 @@ public class LocationsRepository: ILocationsRepository
         catch (Exception e)
         {
             _logger.LogError(e.Message, "Fail to create location");
-            return Result.Failure<Guid>(e.Message);
+            return Result.Failure<Guid>("Failed to create location");
         }
     }
 }
