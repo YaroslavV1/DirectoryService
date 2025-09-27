@@ -24,7 +24,7 @@ public class Location: Entity<LocationId>
         Name = locationName;
         Address = address;
         TimeZone = timeZone;
-        CreatedAt = DateTime.Now;
+        CreatedAt = DateTime.UtcNow;
     }
 
 

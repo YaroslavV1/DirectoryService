@@ -1,13 +1,13 @@
 using DirectoryService.Infrastructure;
+using DirectoryService.Presentation;
 
 var builder = WebApplication.CreateBuilder(args);
-
-builder.Services.AddControllers();
-builder.Services.AddOpenApi();
 
 builder.Services.AddScoped<DirectoryServiceDbContext>(sp =>
     new DirectoryServiceDbContext(
         builder.Configuration.GetConnectionString("DirectoryServiceDb")!));
+
+builder.Services.AddProgramDependencies();
 
 var app = builder.Build();
 
