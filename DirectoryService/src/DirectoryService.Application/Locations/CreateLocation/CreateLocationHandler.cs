@@ -58,7 +58,13 @@ public class CreateLocationHandler : ICommandHandler<Guid, CreateLocationCommand
 
         var locationId = await _locationsRepository.Create(location, cancellationToken);
 
-        return locationId;
+        if (locationId.IsFailure)
+        {
+            _logger.LogError("Failed to create location");
+            throw new ArgumentException("Failed to create location");
+        }
+
+        return locationId.Value;
 
     }
 }
