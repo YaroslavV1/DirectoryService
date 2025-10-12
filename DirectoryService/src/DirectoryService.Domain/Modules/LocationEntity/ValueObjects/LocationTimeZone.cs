@@ -1,5 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 using CSharpFunctionalExtensions;
+using DirectoryService.Shared;
 
 namespace DirectoryService.Domain.Modules.LocationEntity.ValueObjects;
 
@@ -14,14 +15,12 @@ public record LocationTimeZone
 
     private LocationTimeZone(string value) => Value = value;
 
-    public static Result<LocationTimeZone> Create(string value)
+    public static Result<LocationTimeZone, Error> Create(string value)
     {
         if (string.IsNullOrWhiteSpace(value))
-            return Result.Failure<LocationTimeZone>("Timezone is required!");
-
+            return GeneralErrors.ValueIsRequired("LocationTimeZone");
         if (!_ianaRegex.IsMatch(value))
-            return Result.Failure<LocationTimeZone>("Invalid IANA timezone format.");
-
+            return GeneralErrors.ValueIsInvalid("LocationTimeZone");
         return new LocationTimeZone(value);
     }
 }

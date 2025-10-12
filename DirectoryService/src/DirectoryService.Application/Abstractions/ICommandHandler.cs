@@ -8,7 +8,6 @@ public interface ICommandHandler<TResponse, in TCommand>
     Task<TResponse> Handle(TCommand command, CancellationToken cancellationToken = default);
 }
 
-
 public interface ICommandHandler<in TCommand>
 {
     Task Handle(TCommand command, CancellationToken cancellationToken = default);

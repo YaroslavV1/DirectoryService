@@ -1,6 +1,7 @@
 ﻿using CSharpFunctionalExtensions;
 using DirectoryService.Application.Locations;
 using DirectoryService.Domain.Modules.LocationEntity;
+using DirectoryService.Shared;
 using Microsoft.Extensions.Logging;
 
 namespace DirectoryService.Infrastructure.Locations;
@@ -8,18 +9,17 @@ namespace DirectoryService.Infrastructure.Locations;
 public class LocationsRepository: ILocationsRepository
 {
     private readonly DirectoryServiceDbContext _dbContext;
-    private readonly Logger<LocationsRepository> _logger;
+    private readonly ILogger<LocationsRepository> _logger;
 
     public LocationsRepository(
         DirectoryServiceDbContext dbContext,
-        Logger<LocationsRepository> logger)
+        ILogger<LocationsRepository> logger)
     {
         _dbContext = dbContext;
         _logger = logger;
     }
 
-
-    public async Task<Result<Guid>> Create(Location location, CancellationToken cancellationToken = default)
+    public async Task<Result<Guid, Errors>> Create(Location location, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -32,7 +32,7 @@ public class LocationsRepository: ILocationsRepository
         catch (Exception e)
         {
             _logger.LogError(e.Message, "Fail to create location");
-            return Result.Failure<Guid>("Failed to create location");
+            return GeneralErrors.Failure().ToErrors();
         }
     }
 }

@@ -1,11 +1,13 @@
-﻿using DirectoryService.Application.Abstractions;
+﻿using CSharpFunctionalExtensions;
+using DirectoryService.Application.Abstractions;
 using DirectoryService.Domain.Modules.LocationEntity;
 using DirectoryService.Domain.Modules.LocationEntity.ValueObjects;
+using DirectoryService.Shared;
 using Microsoft.Extensions.Logging;
 
 namespace DirectoryService.Application.Locations.CreateLocation;
 
-public class CreateLocationHandler : ICommandHandler<Guid, CreateLocationCommand>
+public class CreateLocationHandler : ICommandHandler<Result<Guid, Errors>, CreateLocationCommand>
 {
     private readonly ILocationsRepository _locationsRepository;
     private readonly ILogger<CreateLocationHandler> _logger;
@@ -18,7 +20,7 @@ public class CreateLocationHandler : ICommandHandler<Guid, CreateLocationCommand
         _logger = logger;
     }
 
-    public async Task<Guid> Handle(
+    public async Task<Result<Guid, Errors>> Handle(
         CreateLocationCommand command,
         CancellationToken cancellationToken = default)
     {
@@ -30,24 +32,24 @@ public class CreateLocationHandler : ICommandHandler<Guid, CreateLocationCommand
 
         if (address.IsFailure)
         {
-            _logger.LogError(address.Error);
-            throw new ArgumentException(address.Error);
+            _logger.LogError(address.Error.Message);
+            return address.Error.ToErrors();
         }
 
         var locationName = LocationName.Create(command.Request.Name);
 
         if (locationName.IsFailure)
         {
-            _logger.LogError(locationName.Error);
-            throw new ArgumentException(locationName.Error);
+            _logger.LogError(locationName.Error.Message);
+            return locationName.Error.ToErrors();
         }
 
         var timeZone = LocationTimeZone.Create(command.Request.TimeZone);
 
         if (timeZone.IsFailure)
         {
-            _logger.LogError(timeZone.Error);
-            throw new ArgumentException(timeZone.Error);
+            _logger.LogError(timeZone.Error.Message);
+            return timeZone.Error.ToErrors();
         }
 
         var location = Location.Create(
@@ -61,10 +63,10 @@ public class CreateLocationHandler : ICommandHandler<Guid, CreateLocationCommand
         if (locationId.IsFailure)
         {
             _logger.LogError("Failed to create location");
-            throw new ArgumentException("Failed to create location");
+            return locationId.Error;
         }
 
-        return locationId.Value;
+        return locationId;
 
     }
 }

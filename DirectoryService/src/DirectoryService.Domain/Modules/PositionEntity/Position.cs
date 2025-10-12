@@ -2,6 +2,7 @@
 using DirectoryService.Domain.Modules.DepartmentEntity;
 using DirectoryService.Domain.Modules.PositionEntity.ValueObjects;
 using DirectoryService.Domain.Shared;
+using DirectoryService.Shared;
 
 namespace DirectoryService.Domain.Modules.PositionEntity;
 
@@ -37,10 +38,10 @@ public class Position: Shared.Entity<PositionId>
 
     public IReadOnlyList<DepartmentPosition> Departments => _departments;
 
-    public static Result<Position> Create(PositionId positionId, PositionName positionName, string description)
+    public static Result<Position, Error> Create(PositionId positionId, PositionName positionName, string description)
     {
         if (description.Length > LengthConstants.MAX_POSITION_DESCRIPTION)
-            return Result.Failure<Position>($"Description must be less than {LengthConstants.MAX_POSITION_DESCRIPTION} characters!");
+            return GeneralErrors.ValueIsInvalid("PositionDescription");
         return new Position(positionId, positionName, description);
     }
 
