@@ -1,5 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 using CSharpFunctionalExtensions;
+using DirectoryService.Shared;
 
 namespace DirectoryService.Domain.Modules.DepartmentEntity.ValueObjects;
 
@@ -17,10 +18,10 @@ public record DepartmentPath
         Value = value;
     }
 
-    public static Result<DepartmentPath> Create(string value)
+    public static Result<DepartmentPath, Error> Create(string value)
     {
         if(!_pathRegex.IsMatch(value))
-            return Result.Failure<DepartmentPath>("Invalid path format!");
+            return GeneralErrors.ValueIsInvalid("DepartmentPath");
         return new DepartmentPath(value);
     }
 }

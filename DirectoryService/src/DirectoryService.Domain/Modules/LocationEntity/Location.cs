@@ -27,7 +27,6 @@ public class Location: Entity<LocationId>
         CreatedAt = DateTime.UtcNow;
     }
 
-
     public LocationName Name { get;  private set; } = default!;
 
     public Address Address { get;  private set; } = default!;

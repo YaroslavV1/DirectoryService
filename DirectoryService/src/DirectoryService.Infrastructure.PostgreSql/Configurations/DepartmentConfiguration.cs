@@ -49,7 +49,7 @@ public class DepartmentConfiguration : IEntityTypeConfiguration<Department>
         builder.Property(d => d.ParentId)
             .IsRequired(false)
             .HasConversion(
-                d => d.Value,
+                d => d!.Value,
                 id => DepartmentId.Create(id));
 
         builder.ComplexProperty(d => d.Path, dnb =>

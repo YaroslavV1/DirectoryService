@@ -1,5 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
 using DirectoryService.Domain.Shared;
+using DirectoryService.Shared;
 
 namespace DirectoryService.Domain.Modules.PositionEntity.ValueObjects;
 
@@ -12,14 +13,13 @@ public record PositionName
         Value = value;
     }
 
-    public static Result<PositionName> Create(string value)
+    public static Result<PositionName, Error> Create(string value)
     {
         if (string.IsNullOrWhiteSpace(value))
-            return Result.Failure<PositionName>("Position name cannot be empty!");
+            return GeneralErrors.ValueIsRequired("PositionName");
         if(value.Length < LengthConstants.MIN_POSITION_NAME && value.Length > LengthConstants.MAX_POSITION_NAME)
         {
-            return Result.Failure<PositionName>(
-                $"Position name must be between {LengthConstants.MIN_POSITION_NAME} and {LengthConstants.MAX_POSITION_NAME} length!");
+            return GeneralErrors.ValueIsInvalid("PositionName");
         }
 
         return new PositionName(value);

@@ -1,5 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
 using DirectoryService.Domain.Modules.DepartmentEntity.ValueObjects;
+using DirectoryService.Shared;
 
 namespace DirectoryService.Domain.Modules.DepartmentEntity;
 
@@ -49,15 +50,13 @@ public class Department: Shared.Entity<DepartmentId>
 
     public DateTime UpdatedAt { get; private set; }
 
-
     public IReadOnlyList<Department> ChildDepartments => _childDepartments;
 
     public IReadOnlyList<DepartmentPosition> Positions => _positions;
 
     public IReadOnlyList<DepartmentLocation> Locations => _locations;
 
-
-    public static Result<Department> Create(
+    public static Result<Department, Error> Create(
         DepartmentId departmentId,
         DepartmentName name,
         Identifier identifier,
@@ -66,7 +65,7 @@ public class Department: Shared.Entity<DepartmentId>
         short depth)
     {
         if(depth < 0)
-            return Result.Failure<Department>("The Depth can not be less than zero.");
+            return GeneralErrors.ValueIsInvalid("DepartmentDepth");
 
         return new Department(
             departmentId,
