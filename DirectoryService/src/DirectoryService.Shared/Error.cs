@@ -55,11 +55,3 @@ public record Error
 
     public Errors ToErrors() => new([this]);
 }
-
-public enum ErrorType
-{
-    VALIDATION,
-    NOT_FOUND,
-    FAILURE,
-    CONFLICT,
-}

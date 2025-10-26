@@ -1,5 +1,5 @@
-﻿using DirectoryService.Domain.Modules.PositionEntity;
-using DirectoryService.Domain.Modules.PositionEntity.ValueObjects;
+﻿using DirectoryService.Domain.Positions;
+using DirectoryService.Domain.Positions.ValueObjects;
 using DirectoryService.Domain.Shared;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -41,5 +41,12 @@ public class PositionConfiguration : IEntityTypeConfiguration<Position>
             .HasColumnName("updated_at")
             .IsRequired();
 
+        builder.Property(p => p.IsActive)
+            .IsRequired()
+            .HasColumnName("is_active");
+        
+        builder.HasMany(p => p.Departments)
+            .WithOne()
+            .HasForeignKey(d => d.PositionId);
     }
 }

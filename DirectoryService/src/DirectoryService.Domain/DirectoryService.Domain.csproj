@@ -11,10 +11,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Modules\" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\DirectoryService.Shared\DirectoryService.Shared.csproj" />
     </ItemGroup>
 

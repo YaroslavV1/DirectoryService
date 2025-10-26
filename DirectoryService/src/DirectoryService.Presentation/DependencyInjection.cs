@@ -15,6 +15,7 @@ public static class DependencyInjection
     private static IServiceCollection AddWebDependencies(this IServiceCollection services)
     {
         services.AddControllers();
+
         services.AddOpenApi(options =>
         {
             options.AddSchemaTransformer((schema, context, _) =>
@@ -26,7 +27,6 @@ public static class DependencyInjection
                         errorsProp.Items.Reference = new OpenApiReference
                         {
                             Type = ReferenceType.Schema,
-                            Id = "Error"
                         };
                     }
                 }

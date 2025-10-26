@@ -1,14 +1,13 @@
-﻿using DirectoryService.Domain.Modules.DepartmentEntity;
-using DirectoryService.Domain.Modules.LocationEntity.ValueObjects;
+﻿using DirectoryService.Domain.Locations.ValueObjects;
 using DirectoryService.Domain.Shared;
 
-namespace DirectoryService.Domain.Modules.LocationEntity;
+namespace DirectoryService.Domain.Locations;
 
 public class Location: Entity<LocationId>
 {
-    private readonly List<DepartmentLocation> _departments = [];
+    private readonly List<DepartmentLocation.DepartmentLocation> _departments = [];
 
-    //ef core
+    // ef core
     private Location(LocationId id)
     : base(id)
     {
@@ -25,6 +24,7 @@ public class Location: Entity<LocationId>
         Address = address;
         TimeZone = timeZone;
         CreatedAt = DateTime.UtcNow;
+        UpdatedAt = DateTime.UtcNow;
     }
 
     public LocationName Name { get;  private set; } = default!;
@@ -39,7 +39,7 @@ public class Location: Entity<LocationId>
 
     public DateTime UpdatedAt { get; private set; }
 
-    public IReadOnlyList<DepartmentLocation> Departments => _departments;
+    public IReadOnlyList<DepartmentLocation.DepartmentLocation> Departments => _departments;
 
     public static Location Create(
         LocationId locationId,

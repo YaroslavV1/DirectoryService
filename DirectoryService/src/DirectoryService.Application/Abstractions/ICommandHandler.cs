@@ -1,4 +1,5 @@
-﻿using DirectoryService.Application.Locations.CreateLocation;
+﻿using CSharpFunctionalExtensions;
+using DirectoryService.Shared;
 
 namespace DirectoryService.Application.Abstractions;
 
@@ -10,5 +11,5 @@ public interface ICommandHandler<TResponse, in TCommand>
 
 public interface ICommandHandler<in TCommand>
 {
-    Task Handle(TCommand command, CancellationToken cancellationToken = default);
+    Task<UnitResult<Errors>> Handle(TCommand command, CancellationToken cancellationToken = default);
 }

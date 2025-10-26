@@ -1,4 +1,4 @@
-﻿namespace DirectoryService.Domain.Modules.LocationEntity.ValueObjects;
+﻿namespace DirectoryService.Domain.Locations.ValueObjects;
 
 public record LocationId
 {
@@ -9,4 +9,4 @@ public record LocationId
     public static LocationId NewId() => new(Guid.NewGuid());
 
     public static LocationId Create(Guid value) => new(value);
-};
+}

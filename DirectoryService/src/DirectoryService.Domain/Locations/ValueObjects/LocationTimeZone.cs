@@ -2,11 +2,10 @@
 using CSharpFunctionalExtensions;
 using DirectoryService.Shared;
 
-namespace DirectoryService.Domain.Modules.LocationEntity.ValueObjects;
+namespace DirectoryService.Domain.Locations.ValueObjects;
 
 public record LocationTimeZone
 {
-
     private static readonly Regex _ianaRegex = new(
         @"^[A-Z][a-zA-Z]*(?:/[A-Z][a-zA-Z_]+)+$",
         RegexOptions.Compiled);
