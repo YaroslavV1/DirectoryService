@@ -1,7 +1,7 @@
 ﻿using CSharpFunctionalExtensions;
 using DirectoryService.Shared;
 
-namespace DirectoryService.Domain.Modules.LocationEntity.ValueObjects;
+namespace DirectoryService.Domain.Locations.ValueObjects;
 
 public record Address
 {

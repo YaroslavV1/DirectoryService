@@ -1,5 +1,5 @@
-﻿using DirectoryService.Domain.Modules.LocationEntity;
-using DirectoryService.Domain.Modules.LocationEntity.ValueObjects;
+﻿using DirectoryService.Domain.Locations;
+using DirectoryService.Domain.Locations.ValueObjects;
 using DirectoryService.Domain.Shared;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -61,5 +61,13 @@ public class LocationConfiguration : IEntityTypeConfiguration<Location>
         builder.Property(l => l.UpdatedAt)
             .IsRequired()
             .HasColumnName("updated_at");
+        
+        builder.Property(l => l.IsActive)
+            .IsRequired()
+            .HasColumnName("is_active");
+        
+        builder.HasMany(l => l.Departments)
+            .WithOne()
+            .HasForeignKey(d => d.LocationId);
     }
 }

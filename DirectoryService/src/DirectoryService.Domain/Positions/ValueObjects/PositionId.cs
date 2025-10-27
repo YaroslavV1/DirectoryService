@@ -1,4 +1,4 @@
-﻿namespace DirectoryService.Domain.Modules.PositionEntity.ValueObjects;
+﻿namespace DirectoryService.Domain.Positions.ValueObjects;
 
 public record PositionId
 {

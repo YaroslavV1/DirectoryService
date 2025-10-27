@@ -1,16 +1,15 @@
 ﻿using CSharpFunctionalExtensions;
-using DirectoryService.Domain.Modules.DepartmentEntity;
-using DirectoryService.Domain.Modules.PositionEntity.ValueObjects;
+using DirectoryService.Domain.Positions.ValueObjects;
 using DirectoryService.Domain.Shared;
 using DirectoryService.Shared;
 
-namespace DirectoryService.Domain.Modules.PositionEntity;
+namespace DirectoryService.Domain.Positions;
 
 public class Position: Shared.Entity<PositionId>
 {
-    private readonly List<DepartmentPosition> _departments = [];
+    private readonly List<DepartmentPosition.DepartmentPosition> _departments = [];
 
-    //ef core
+    // ef core
     private Position(PositionId id)
     : base(id)
     { }
@@ -24,6 +23,7 @@ public class Position: Shared.Entity<PositionId>
         Name = positionName;
         Description = description;
         CreatedAt = DateTime.UtcNow;
+        UpdatedAt = CreatedAt;
     }
 
     public PositionName Name { get; private set; } = default!;
@@ -36,7 +36,7 @@ public class Position: Shared.Entity<PositionId>
 
     public DateTime UpdatedAt { get; private set; }
 
-    public IReadOnlyList<DepartmentPosition> Departments => _departments;
+    public IReadOnlyList<DepartmentPosition.DepartmentPosition> Departments => _departments;
 
     public static Result<Position, Error> Create(PositionId positionId, PositionName positionName, string description)
     {

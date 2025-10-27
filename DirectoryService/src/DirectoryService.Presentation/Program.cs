@@ -1,5 +1,7 @@
+using System.Text.Json.Serialization;
 using DirectoryService.Infrastructure;
 using DirectoryService.Presentation;
+using Microsoft.AspNetCore.Http.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +10,11 @@ builder.Services.AddScoped<DirectoryServiceDbContext>(sp =>
         builder.Configuration.GetConnectionString("DirectoryServiceDb")!));
 
 builder.Services.AddProgramDependencies();
+
+builder.Services.Configure<JsonOptions>(options =>
+{
+    options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
+});
 
 var app = builder.Build();
 

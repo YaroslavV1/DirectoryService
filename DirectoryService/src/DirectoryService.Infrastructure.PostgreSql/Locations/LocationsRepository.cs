@@ -1,6 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
 using DirectoryService.Application.Locations;
-using DirectoryService.Domain.Modules.LocationEntity;
+using DirectoryService.Domain.Locations;
 using DirectoryService.Shared;
 using Microsoft.Extensions.Logging;
 

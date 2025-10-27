@@ -1,5 +1,5 @@
-﻿using DirectoryService.Domain.Modules.DepartmentEntity;
-using DirectoryService.Domain.Modules.DepartmentEntity.ValueObjects;
+﻿using DirectoryService.Domain.Departments;
+using DirectoryService.Domain.Departments.ValueObjects;
 using DirectoryService.Domain.Shared;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -16,6 +16,8 @@ public class DepartmentConfiguration : IEntityTypeConfiguration<Department>
             .HasName("pk_department");
 
         builder.Property(d => d.Id)
+            .IsRequired()
+            .HasColumnName("id")
             .HasConversion(
                 d => d.Value,
                 id => DepartmentId.Create(id));
@@ -37,17 +39,15 @@ public class DepartmentConfiguration : IEntityTypeConfiguration<Department>
                 .HasColumnName("identifier");
         });
 
-        builder.Property(d => d.ParentId)
-            .HasColumnName("parent_id");
-
-        builder.HasOne(d => d.Parent)
-            .WithMany(p => p.ChildDepartments)
-            .IsRequired(false)
-            .HasForeignKey(d => d.ParentId)
-            .OnDelete(DeleteBehavior.ClientNoAction);
+        // builder.HasOne(d => d.Parent)
+        //     .WithMany(p => p.ChildDepartments)
+        //     .IsRequired(false)
+        //     .HasForeignKey(d => d.ParentId)
+        //     .OnDelete(DeleteBehavior.ClientNoAction);
 
         builder.Property(d => d.ParentId)
             .IsRequired(false)
+            .HasColumnName("parent_id")
             .HasConversion(
                 d => d!.Value,
                 id => DepartmentId.Create(id));
@@ -63,6 +63,14 @@ public class DepartmentConfiguration : IEntityTypeConfiguration<Department>
             .IsRequired()
             .HasColumnName("depth");
 
+        builder.Property(d => d.ChildrenCount)
+            .IsRequired()
+            .HasColumnName("children_count");
+
+        builder.Property(d => d.IsActive)
+            .IsRequired()
+            .HasColumnName("is_active");
+
         builder.Property(d => d.CreatedAt)
             .HasColumnName("created_at")
             .IsRequired();
@@ -70,6 +78,20 @@ public class DepartmentConfiguration : IEntityTypeConfiguration<Department>
         builder.Property(d => d.UpdatedAt)
             .HasColumnName("updated_at")
             .IsRequired();
+
+        builder.HasMany(d => d.ChildDepartments)
+            .WithOne()
+            .IsRequired(false)
+            .HasForeignKey(d => d.ParentId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasMany(d => d.Locations)
+            .WithOne()
+            .HasForeignKey(d => d.DepartmentId);
+
+        builder.HasMany(d => d.Positions)
+            .WithOne()
+            .HasForeignKey(d => d.DepartmentId);
 
     }
 }

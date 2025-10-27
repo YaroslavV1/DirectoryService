@@ -1,5 +1,4 @@
-﻿using System.Net;
-using DirectoryService.Shared;
+﻿using DirectoryService.Shared;
 
 namespace DirectoryService.Presentation.EndpointResults;
 

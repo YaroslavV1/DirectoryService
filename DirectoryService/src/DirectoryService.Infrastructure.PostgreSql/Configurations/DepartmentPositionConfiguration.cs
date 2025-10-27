@@ -1,6 +1,7 @@
-﻿using DirectoryService.Domain.Modules.DepartmentEntity;
-using DirectoryService.Domain.Modules.DepartmentEntity.ValueObjects;
-using DirectoryService.Domain.Modules.PositionEntity.ValueObjects;
+﻿using DirectoryService.Domain.DepartmentPosition;
+using DirectoryService.Domain.DepartmentPosition.ValueObjects;
+using DirectoryService.Domain.Departments.ValueObjects;
+using DirectoryService.Domain.Positions.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -12,8 +13,14 @@ public class DepartmentPositionConfiguration : IEntityTypeConfiguration<Departme
     {
         builder.ToTable("department_positions");
 
-        builder.HasKey(dp => new { dp.DepartmentId, dp.PositionId })
-            .HasName("pk_department_positions");
+        builder.HasKey(dp => dp.Id);
+
+        builder.Property(dp => dp.Id).
+            IsRequired()
+            .HasColumnName("id")
+            .HasConversion(
+                value => value.Value,
+                value => DepartmentPositionId.Create(value));
 
         builder.Property(dl => dl.DepartmentId)
             .HasColumnName("department_id")
@@ -27,16 +34,5 @@ public class DepartmentPositionConfiguration : IEntityTypeConfiguration<Departme
                 p => p.Value,
                 id => PositionId.Create(id));
 
-        builder.HasOne(d => d.Department)
-            .WithMany(dp => dp.Positions)
-            .HasForeignKey(d => d.DepartmentId)
-            .IsRequired()
-            .OnDelete(DeleteBehavior.Cascade);
-
-        builder.HasOne(d => d.Position)
-            .WithMany(dp => dp.Departments)
-            .HasForeignKey(d => d.PositionId)
-            .IsRequired()
-            .OnDelete(DeleteBehavior.Cascade);
     }
 }

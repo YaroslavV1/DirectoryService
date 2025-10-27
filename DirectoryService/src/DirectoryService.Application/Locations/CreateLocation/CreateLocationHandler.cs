@@ -1,7 +1,7 @@
 ﻿using CSharpFunctionalExtensions;
 using DirectoryService.Application.Abstractions;
-using DirectoryService.Domain.Modules.LocationEntity;
-using DirectoryService.Domain.Modules.LocationEntity.ValueObjects;
+using DirectoryService.Domain.Locations;
+using DirectoryService.Domain.Locations.ValueObjects;
 using DirectoryService.Shared;
 using Microsoft.Extensions.Logging;
 

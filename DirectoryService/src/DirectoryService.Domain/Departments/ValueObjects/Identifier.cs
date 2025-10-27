@@ -3,11 +3,10 @@ using CSharpFunctionalExtensions;
 using DirectoryService.Domain.Shared;
 using DirectoryService.Shared;
 
-namespace DirectoryService.Domain.Modules.DepartmentEntity.ValueObjects;
+namespace DirectoryService.Domain.Departments.ValueObjects;
 
 public record Identifier
 {
-
     private static readonly Regex _latinRegex = new(@"^[A-Za-z]+$", RegexOptions.Compiled);
 
     public string Value { get; }
@@ -21,6 +20,7 @@ public record Identifier
     {
         if (string.IsNullOrWhiteSpace(value))
             return GeneralErrors.ValueIsRequired("DepartmentIdentifier");
+
         if (value.Length < LengthConstants.MIN_DEPARTMENT_ID || value.Length > LengthConstants.MAX_DEPARTMENT_ID)
         {
             return GeneralErrors.ValueIsInvalid("DepartmentIdentifier");

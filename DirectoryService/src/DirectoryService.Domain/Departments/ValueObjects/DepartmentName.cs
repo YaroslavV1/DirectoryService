@@ -2,11 +2,11 @@
 using DirectoryService.Domain.Shared;
 using DirectoryService.Shared;
 
-namespace DirectoryService.Domain.Modules.DepartmentEntity.ValueObjects;
+namespace DirectoryService.Domain.Departments.ValueObjects;
 
 public record DepartmentName
 {
-    public string Value { get; private set; }
+    public string Value { get; }
 
     private DepartmentName(string value)
     {
@@ -17,6 +17,7 @@ public record DepartmentName
     {
         if (string.IsNullOrWhiteSpace(value))
             return GeneralErrors.ValueIsRequired("DepartmentName");
+
         if (value.Length <= LengthConstants.MIN_DEPARTMENT_NAME && value.Length >= LengthConstants.MAX_DEPARTMENT_NAME)
         {
             return GeneralErrors.ValueIsInvalid("DepartmentName");

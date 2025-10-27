@@ -1,6 +1,8 @@
-﻿using DirectoryService.Domain.Modules.DepartmentEntity;
-using DirectoryService.Domain.Modules.LocationEntity;
-using DirectoryService.Domain.Modules.PositionEntity;
+﻿using DirectoryService.Domain.DepartmentLocation;
+using DirectoryService.Domain.DepartmentPosition;
+using DirectoryService.Domain.Departments;
+using DirectoryService.Domain.Locations;
+using DirectoryService.Domain.Positions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -34,11 +36,11 @@ public class DirectoryServiceDbContext : DbContext
         optionsBuilder.UseLoggerFactory(CreateLoggerFactory());
     }
 
-    private ILoggerFactory CreateLoggerFactory() =>
-        LoggerFactory.Create(builder => { builder.AddConsole(); });
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(DirectoryServiceDbContext).Assembly);
     }
+
+    private ILoggerFactory CreateLoggerFactory() =>
+        LoggerFactory.Create(builder => { builder.AddConsole(); });
 }
