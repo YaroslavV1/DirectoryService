@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 using DirectoryService.Infrastructure;
 using DirectoryService.Presentation;
+using DirectoryService.Presentation.Extensions;
 using Microsoft.AspNetCore.Http.Json;
 using Serilog;
 using Serilog.Events;
@@ -32,6 +33,8 @@ builder.Services.Configure<JsonOptions>(options =>
 });
 
 var app = builder.Build();
+
+app.UseExceptionHandlerMiddleware();
 
 if (app.Environment.IsDevelopment())
 {
