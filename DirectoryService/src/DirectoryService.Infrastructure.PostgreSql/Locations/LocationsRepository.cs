@@ -27,6 +27,8 @@ public class LocationsRepository: ILocationsRepository
 
             await _dbContext.SaveChangesAsync(cancellationToken);
 
+            _logger.LogInformation("Successfully added to the database with {location}", location.Id.Value);
+
             return location.Id.Value;
         }
         catch (Exception e)

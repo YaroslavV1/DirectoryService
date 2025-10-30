@@ -61,11 +61,11 @@ public class LocationConfiguration : IEntityTypeConfiguration<Location>
         builder.Property(l => l.UpdatedAt)
             .IsRequired()
             .HasColumnName("updated_at");
-        
+
         builder.Property(l => l.IsActive)
             .IsRequired()
             .HasColumnName("is_active");
-        
+
         builder.HasMany(l => l.Departments)
             .WithOne()
             .HasForeignKey(d => d.LocationId);

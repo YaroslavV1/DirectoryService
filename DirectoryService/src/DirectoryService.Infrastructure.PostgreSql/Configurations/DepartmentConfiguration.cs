@@ -39,12 +39,6 @@ public class DepartmentConfiguration : IEntityTypeConfiguration<Department>
                 .HasColumnName("identifier");
         });
 
-        // builder.HasOne(d => d.Parent)
-        //     .WithMany(p => p.ChildDepartments)
-        //     .IsRequired(false)
-        //     .HasForeignKey(d => d.ParentId)
-        //     .OnDelete(DeleteBehavior.ClientNoAction);
-
         builder.Property(d => d.ParentId)
             .IsRequired(false)
             .HasColumnName("parent_id")

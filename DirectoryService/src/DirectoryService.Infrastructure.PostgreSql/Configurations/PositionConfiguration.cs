@@ -44,7 +44,7 @@ public class PositionConfiguration : IEntityTypeConfiguration<Position>
         builder.Property(p => p.IsActive)
             .IsRequired()
             .HasColumnName("is_active");
-        
+
         builder.HasMany(p => p.Departments)
             .WithOne()
             .HasForeignKey(d => d.PositionId);

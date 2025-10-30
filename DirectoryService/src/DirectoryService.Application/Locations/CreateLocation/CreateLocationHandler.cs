@@ -66,6 +66,8 @@ public class CreateLocationHandler : ICommandHandler<Result<Guid, Errors>, Creat
             return locationId.Error;
         }
 
+        _logger.LogInformation("Successfully created location {location}", locationId.Value);
+
         return locationId;
 
     }
