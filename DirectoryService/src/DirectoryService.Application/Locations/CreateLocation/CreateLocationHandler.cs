@@ -1,8 +1,10 @@
 ﻿using CSharpFunctionalExtensions;
 using DirectoryService.Application.Abstractions;
+using DirectoryService.Application.Validation;
 using DirectoryService.Domain.Locations;
 using DirectoryService.Domain.Locations.ValueObjects;
 using DirectoryService.Shared;
+using FluentValidation;
 using Microsoft.Extensions.Logging;
 
 namespace DirectoryService.Application.Locations.CreateLocation;
@@ -10,13 +12,16 @@ namespace DirectoryService.Application.Locations.CreateLocation;
 public class CreateLocationHandler : ICommandHandler<Result<Guid, Errors>, CreateLocationCommand>
 {
     private readonly ILocationsRepository _locationsRepository;
+    private readonly IValidator<CreateLocationCommand> _validator;
     private readonly ILogger<CreateLocationHandler> _logger;
 
     public CreateLocationHandler(
         ILocationsRepository locationsRepository,
+        IValidator<CreateLocationCommand> validator,
         ILogger<CreateLocationHandler> logger)
     {
         _locationsRepository = locationsRepository;
+        _validator = validator;
         _logger = logger;
     }
 
@@ -24,51 +29,43 @@ public class CreateLocationHandler : ICommandHandler<Result<Guid, Errors>, Creat
         CreateLocationCommand command,
         CancellationToken cancellationToken = default)
     {
+        var validationResult = await _validator.ValidateAsync(command, cancellationToken);
+
+        if (!validationResult.IsValid)
+        {
+            return validationResult.ToErrorList();
+        }
+
         var address = Address.Create(
             command.Request.Address.City,
             command.Request.Address.Street,
             command.Request.Address.PostalCode,
-            command.Request.Address.House);
+            command.Request.Address.House).Value;
 
-        if (address.IsFailure)
-        {
-            _logger.LogError(address.Error.Message);
-            return address.Error.ToErrors();
-        }
+        var locationName = LocationName.Create(command.Request.Name).Value;
 
-        var locationName = LocationName.Create(command.Request.Name);
-
-        if (locationName.IsFailure)
-        {
-            _logger.LogError(locationName.Error.Message);
-            return locationName.Error.ToErrors();
-        }
-
-        var timeZone = LocationTimeZone.Create(command.Request.TimeZone);
-
-        if (timeZone.IsFailure)
-        {
-            _logger.LogError(timeZone.Error.Message);
-            return timeZone.Error.ToErrors();
-        }
+        var timeZone = LocationTimeZone.Create(command.Request.TimeZone).Value;
 
         var location = Location.Create(
             LocationId.NewId(),
-            locationName.Value,
-            address.Value,
-            timeZone.Value);
+            locationName,
+            address,
+            timeZone);
+
+        var locationNameExistsResult = await _locationsRepository.ExistsByNameAsync(locationName, cancellationToken);
+
+        if (!locationNameExistsResult.Value)
+            return GeneralErrors.AlreadyExists("Location").ToErrors();
+
+        var locationAddressExistsResult = await _locationsRepository.ExistsByAddressAsync(address, cancellationToken);
+
+        if (!locationAddressExistsResult.Value)
+            return GeneralErrors.AlreadyExists("Location").ToErrors();
 
         var locationId = await _locationsRepository.Create(location, cancellationToken);
-
-        if (locationId.IsFailure)
-        {
-            _logger.LogError("Failed to create location");
-            return locationId.Error;
-        }
 
         _logger.LogInformation("Successfully created location {location}", locationId.Value);
 
         return locationId;
-
     }
 }

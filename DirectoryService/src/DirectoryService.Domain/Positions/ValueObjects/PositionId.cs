@@ -2,9 +2,8 @@
 
 public record PositionId
 {
-    public Guid Value { get; }
-
     private PositionId(Guid value) => Value = value;
+    public Guid Value { get; }
 
     public static PositionId NewId() => new(Guid.NewGuid());
 
