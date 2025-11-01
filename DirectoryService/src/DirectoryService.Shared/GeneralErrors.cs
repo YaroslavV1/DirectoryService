@@ -19,9 +19,11 @@ public static class GeneralErrors
         return Error.Failure("server.failure", "Серверная ошибка");
     }
 
-    public static Error AlreadyExists(string? name = null)
+    public static Error AlreadyExists(string? name = null, string? propertyName = null)
     {
         string label = name ?? "значение";
-        return Error.Validation("value.already.exists", $"{label} уже существует", name);
+        return propertyName == null
+            ? Error.Validation("value.already.exists", $"{label} уже существует")
+            : Error.Validation("value.already.exists", $"{label} уже существует", propertyName);
     }
 }
