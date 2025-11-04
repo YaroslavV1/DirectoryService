@@ -1,24 +1,26 @@
 ﻿using CSharpFunctionalExtensions;
 using DirectoryService.Application.Abstractions;
 using DirectoryService.Application.Locations.CreateLocation;
+using DirectoryService.Application.Positions.CreatePosition;
 using DirectoryService.Contracts.Locations;
+using DirectoryService.Contracts.Positions;
 using DirectoryService.Presentation.EndpointResults;
 using DirectoryService.Shared;
 using Microsoft.AspNetCore.Mvc;
 
-namespace DirectoryService.Presentation.Locations;
+namespace DirectoryService.Presentation.Positions;
 
 [ApiController]
-[Route("api/locations")]
-public class LocationController : ControllerBase
+[Route("api/positions")]
+public class PositionsController: ControllerBase
 {
     [HttpPost]
     public async Task<EndpointResult<Guid>> Create(
-        [FromServices] ICommandHandler<Result<Guid, Errors>, CreateLocationCommand> handle,
-        [FromBody] CreateLocationRequest request,
+        [FromServices] ICommandHandler<Result<Guid, Errors>, CreatePositionCommand> handle,
+        [FromBody] CreatePositionRequest request,
         CancellationToken cancellationToken = default)
     {
-        var command = new CreateLocationCommand(request);
+        var command = new CreatePositionCommand(request);
 
         var result = await handle.Handle(command, cancellationToken);
 

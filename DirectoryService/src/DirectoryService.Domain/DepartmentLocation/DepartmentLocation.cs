@@ -8,7 +8,7 @@ namespace DirectoryService.Domain.DepartmentLocation;
 
 public class DepartmentLocation
 {
-    
+
     //ef core
     private DepartmentLocation()
     {

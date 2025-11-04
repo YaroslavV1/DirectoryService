@@ -29,7 +29,7 @@ public class PositionConfiguration : IEntityTypeConfiguration<Position>
         });
 
         builder.Property(p => p.Description)
-            .IsRequired()
+            .IsRequired(false)
             .HasColumnName("description")
             .HasMaxLength(LengthConstants.MAX_POSITION_DESCRIPTION);
 

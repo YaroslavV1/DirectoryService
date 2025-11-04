@@ -18,18 +18,20 @@ public class Position : Shared.Entity<PositionId>
     private Position(
         PositionId positionId,
         PositionName positionName,
-        string description)
+        IEnumerable<DepartmentPosition.DepartmentPosition> departments,
+        string? description = null)
         : base(positionId)
     {
         Name = positionName;
         Description = description;
         CreatedAt = DateTime.UtcNow;
-        UpdatedAt = CreatedAt;
+        UpdatedAt = DateTime.UtcNow;
+        _departments = departments.ToList();
     }
 
     public PositionName Name { get; private set; } = default!;
 
-    public string Description { get; private set; } = default!;
+    public string? Description { get; private set; }
 
     public bool IsActive { get; private set; } = true;
 
@@ -39,13 +41,27 @@ public class Position : Shared.Entity<PositionId>
 
     public IReadOnlyList<DepartmentPosition.DepartmentPosition> Departments => _departments;
 
-    public static Result<Position, Error> Create(PositionId positionId, PositionName positionName, string description)
+    public static Result<Position, Error> Create(
+        PositionId positionId,
+        PositionName positionName,
+        string? description,
+        IEnumerable<DepartmentPosition.DepartmentPosition> departmentsPosition)
     {
+        if (description == null)
+        {
+            return new Position(positionId, positionName, departmentsPosition, description);
+        }
+
         if (description.Length > LengthConstants.MAX_POSITION_DESCRIPTION)
         {
             return GeneralErrors.ValueIsInvalid("PositionDescription");
         }
 
-        return new Position(positionId, positionName, description);
+        if (departmentsPosition.ToList().Count == 0)
+        {
+            return Error.Validation("department.position", "Department locations must contain at least one location");
+        }
+
+        return new Position(positionId, positionName, departmentsPosition, description);
     }
 }

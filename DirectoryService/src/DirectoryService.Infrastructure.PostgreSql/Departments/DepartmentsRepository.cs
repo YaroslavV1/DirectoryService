@@ -60,7 +60,7 @@ public class DepartmentsRepository : IDepartmentsRepository
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "Failed to get department");
+            _logger.LogError(e.Message, "Failed to get department");
             return GeneralErrors.Failure();
         }
     }
@@ -73,7 +73,7 @@ public class DepartmentsRepository : IDepartmentsRepository
             bool result = await _dbContext.Departments
                 .AnyAsync(
                     d => d.Identifier == identifier &&
-                               d.ParentId == parentId, cancellationToken);
+                         d.ParentId == parentId, cancellationToken);
 
             if (!result)
             {
@@ -82,11 +82,40 @@ public class DepartmentsRepository : IDepartmentsRepository
 
             _logger.LogError("Department with identifier {identifier} already exists at same level", identifier);
             return GeneralErrors.AlreadyExists("Identifier");
-
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "Server Fail to check existing department with  identifier {identifier}", identifier);
+            _logger.LogError(e.Message, "Server Fail to check existing department with  identifier {identifier}", identifier);
+            return GeneralErrors.Failure();
+        }
+    }
+
+    public async Task<Result<bool, Error>> CheckIfAllDepartmentsExistAsync(
+        IEnumerable<Guid> departmentIds,
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var departmentIdList = departmentIds
+                .Select(DepartmentId.Create);
+
+            int checkResult = await _dbContext.Departments
+                .Where(d => departmentIdList.Contains(d.Id) && d.IsActive)
+                .CountAsync(cancellationToken);
+
+            if (checkResult == departmentIds.Count())
+                return true;
+
+            _logger.LogError("Department with ids {departmentIds} does not exist", departmentIds);
+            return GeneralErrors.NotFound("DepartmentIds");
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(
+                e.Message,
+                "Failed to check existence of departments by IDs. Requested IDs: {RequestedIds}",
+                departmentIds);
+
             return GeneralErrors.Failure();
         }
     }

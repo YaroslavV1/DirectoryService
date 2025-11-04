@@ -17,4 +17,8 @@ public interface IDepartmentsRepository
         DepartmentId parentId,
         Identifier identifier,
         CancellationToken cancellationToken = default);
+
+    Task<Result<bool, Error>> CheckIfAllDepartmentsExistAsync(
+        IEnumerable<Guid> departmentIds,
+        CancellationToken cancellationToken = default);
 }
