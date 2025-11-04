@@ -40,6 +40,35 @@ public class LocationsRepository : ILocationsRepository
         }
     }
 
+    public async Task<Result<bool, Errors>> CheckAllLocationsExistByIds(
+        IEnumerable<LocationId> requestedIds,
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var existingIds = await _dbContext.Locations
+                .Select(l => l.Id.Value)
+                .ToListAsync(cancellationToken);
+
+            var requestedIdList = requestedIds.Select(id => id.Value).ToList();
+
+            var missingIds = requestedIdList.Except(existingIds).ToList();
+
+            if (missingIds.Any())
+                return GeneralErrors.NotFound("LocationId").ToErrors();
+
+            return true;
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(
+                "Failed to check existence of locations by IDs. Requested IDs: {RequestedIds}",
+                requestedIds.Select(x => x.Value));
+
+            return GeneralErrors.Failure().ToErrors();
+        }
+    }
+
     public async Task<Result<bool, Errors>> ExistsByNameAsync(
         LocationName locationName,
         CancellationToken cancellationToken = default)

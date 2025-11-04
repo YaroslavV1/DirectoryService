@@ -54,12 +54,12 @@ public class CreateLocationHandler : ICommandHandler<Result<Guid, Errors>, Creat
 
         var locationNameExistsResult = await _locationsRepository.ExistsByNameAsync(locationName, cancellationToken);
 
-        if (!locationNameExistsResult.Value)
+        if (locationNameExistsResult.Value)
             return GeneralErrors.AlreadyExists("Location").ToErrors();
 
         var locationAddressExistsResult = await _locationsRepository.ExistsByAddressAsync(address, cancellationToken);
 
-        if (!locationAddressExistsResult.Value)
+        if (locationAddressExistsResult.Value)
             return GeneralErrors.AlreadyExists("Location").ToErrors();
 
         var locationId = await _locationsRepository.Create(location, cancellationToken);

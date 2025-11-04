@@ -7,7 +7,7 @@ namespace DirectoryService.Domain.Departments.ValueObjects;
 
 public record Identifier
 {
-    private static readonly Regex _latinRegex = new(@"^[A-Za-z]+$", RegexOptions.Compiled);
+    private static readonly Regex _latinAndHyphenRegex = new(@"^[A-Za-z\-]+$", RegexOptions.Compiled);
 
     public string Value { get; }
 
@@ -26,7 +26,7 @@ public record Identifier
             return GeneralErrors.ValueIsInvalid("DepartmentIdentifier");
         }
 
-        if (!_latinRegex.IsMatch(value))
+        if (!_latinAndHyphenRegex.IsMatch(value))
             return GeneralErrors.ValueIsInvalid("DepartmentIdentifier");
 
         return new Identifier(value);

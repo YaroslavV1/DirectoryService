@@ -1,5 +1,4 @@
 ﻿using DirectoryService.Application.Validation;
-using DirectoryService.Domain.Locations;
 using DirectoryService.Domain.Locations.ValueObjects;
 using DirectoryService.Shared;
 using FluentValidation;
@@ -11,7 +10,7 @@ public class CreateLocationCommandValidator : AbstractValidator<CreateLocationCo
     public CreateLocationCommandValidator()
     {
         RuleFor(c => c.Request)
-            .NotNull()
+            .NotEmpty()
             .WithError(GeneralErrors.ValueIsRequired("Request"));
 
         RuleFor(c => c.Request.Address)

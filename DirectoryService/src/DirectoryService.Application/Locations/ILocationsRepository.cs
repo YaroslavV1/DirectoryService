@@ -9,7 +9,14 @@ public interface ILocationsRepository
 {
     public Task<Result<Guid, Errors>> Create(Location location, CancellationToken cancellationToken = default);
 
-    public Task<Result<bool, Errors>> ExistsByNameAsync(LocationName name, CancellationToken cancellationToken = default);
+    public Task<Result<bool, Errors>> CheckAllLocationsExistByIds(
+        IEnumerable<LocationId> requestedIds,
+        CancellationToken cancellationToken = default);
+
+
+    public Task<Result<bool, Errors>> ExistsByNameAsync(
+        LocationName name,
+        CancellationToken cancellationToken = default);
 
     public Task<Result<bool, Errors>> ExistsByAddressAsync(
         Address address,

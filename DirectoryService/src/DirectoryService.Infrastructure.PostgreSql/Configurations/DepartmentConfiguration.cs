@@ -73,7 +73,7 @@ public class DepartmentConfiguration : IEntityTypeConfiguration<Department>
             .HasColumnName("updated_at")
             .IsRequired();
 
-        builder.HasMany(d => d.ChildDepartments)
+        builder.HasMany(d => d.ChildrenDepartments)
             .WithOne()
             .IsRequired(false)
             .HasForeignKey(d => d.ParentId)

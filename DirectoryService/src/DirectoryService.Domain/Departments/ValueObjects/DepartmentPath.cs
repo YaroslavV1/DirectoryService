@@ -2,7 +2,7 @@
 
 public record DepartmentPath
 {
-    private const char Separator = '/';
+    private const char SEPARATOR = '.';
 
     public string Value { get; }
 
@@ -18,6 +18,6 @@ public record DepartmentPath
 
     public DepartmentPath CreateChild(Identifier identifier)
     {
-        return new DepartmentPath(Value + Separator + identifier.Value);
+        return new DepartmentPath(Value + SEPARATOR + identifier.Value);
     }
 }
