@@ -3,8 +3,10 @@ using DirectoryService.Application.Departments;
 using DirectoryService.Domain.Departments;
 using DirectoryService.Domain.Departments.ValueObjects;
 using DirectoryService.Shared;
+using DirectoryService.Shared.Departments;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Npgsql;
 
 namespace DirectoryService.Infrastructure.Departments;
 
@@ -35,10 +37,47 @@ public class DepartmentsRepository : IDepartmentsRepository
 
             return department.Id.Value;
         }
+        catch (DbUpdateException e) when (e.InnerException is PostgresException pgEx)
+        {
+            if (pgEx is { SqlState: PostgresErrorCodes.UniqueViolation, ConstraintName: not null } &&
+                pgEx.ConstraintName.Contains("parent_identifier"))
+            {
+                _logger.LogError(e, "Database update error while creating a new department"
+                                    + " with identifier {identifier} under parent {parentId}",
+                    department.Identifier.Value, department.ParentId?.Value);
+                return DepartmentsErrors.IdentifierConflict(department.Identifier.Value);
+            }
+
+            if (pgEx is { SqlState: PostgresErrorCodes.UniqueViolation, ConstraintName: not null } &&
+                pgEx.ConstraintName.Contains("root_identifier"))
+            {
+                _logger.LogError(e, "Database update error while creating"
+                                    + " a root department with identifier {identifier}",
+                    department.Identifier.Value);
+                return DepartmentsErrors.RootIdentifierConflict(department.Identifier.Value);
+            }
+
+            if (pgEx is { SqlState: PostgresErrorCodes.ForeignKeyViolation, ConstraintName: not null })
+            {
+                _logger.LogError(e, "Database foreign key violation while creating department with parent {parentId}",
+                    department.ParentId?.Value);
+                return DepartmentsErrors.ParentNotFound(department.ParentId?.Value);
+            }
+
+            _logger.LogError(e, "Error updating the database with {department}", department.Id.Value);
+            return DepartmentsErrors.DatabaseError();
+        }
+        catch (OperationCanceledException oce)
+        {
+            _logger.LogError(oce, "Operation was cancelled while updating the database with {department}",
+                department.Id.Value);
+            return DepartmentsErrors.OperationCancelled();
+        }
         catch (Exception e)
         {
-            _logger.LogError(e.Message, "Fail to create department");
-            return GeneralErrors.Failure();
+            _logger.LogError(e, "Unexpected error while updating the database with {department}",
+                department.Id.Value);
+            return DepartmentsErrors.DatabaseError();
         }
     }
 
@@ -61,31 +100,6 @@ public class DepartmentsRepository : IDepartmentsRepository
         catch (Exception e)
         {
             _logger.LogError(e.Message, "Failed to get department");
-            return GeneralErrors.Failure();
-        }
-    }
-
-    public async Task<Result<bool, Error>> ExistsWithSameIdentifierAsync(DepartmentId parentId, Identifier identifier,
-        CancellationToken cancellationToken = default)
-    {
-        try
-        {
-            bool result = await _dbContext.Departments
-                .AnyAsync(
-                    d => d.Identifier == identifier &&
-                         d.ParentId == parentId, cancellationToken);
-
-            if (!result)
-            {
-                return false;
-            }
-
-            _logger.LogError("Department with identifier {identifier} already exists at same level", identifier);
-            return GeneralErrors.AlreadyExists("Identifier");
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(e.Message, "Server Fail to check existing department with  identifier {identifier}", identifier);
             return GeneralErrors.Failure();
         }
     }

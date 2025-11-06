@@ -28,16 +28,15 @@ public class DepartmentConfiguration : IEntityTypeConfiguration<Department>
                 .IsRequired()
                 .HasMaxLength(LengthConstants.MAX_DEPARTMENT_NAME)
                 .HasColumnName("name");
-
         });
 
-        builder.ComplexProperty(d => d.Identifier, dnb =>
-        {
-            dnb.Property(d => d.Value)
-                .IsRequired()
-                .HasMaxLength(LengthConstants.MAX_DEPARTMENT_ID)
-                .HasColumnName("identifier");
-        });
+        builder.Property(d => d.Identifier)
+            .IsRequired()
+            .HasMaxLength(LengthConstants.MAX_DEPARTMENT_ID)
+            .HasColumnName("identifier")
+            .HasConversion(
+                i => i.Value,
+                value => Identifier.Create(value).Value);
 
         builder.Property(d => d.ParentId)
             .IsRequired(false)
@@ -87,5 +86,14 @@ public class DepartmentConfiguration : IEntityTypeConfiguration<Department>
             .WithOne()
             .HasForeignKey(d => d.DepartmentId);
 
+        builder.HasIndex(d => new { d.ParentId, d.Identifier })
+            .IsUnique()
+            .HasFilter("\"parent_id\" IS NOT NULL")
+            .HasDatabaseName("ux_departments_parent_identifier");
+
+        builder.HasIndex(d => d.Identifier)
+            .IsUnique()
+            .HasFilter("\"parent_id\" IS NULL")
+            .HasDatabaseName("ux_departments_root_identifier");
     }
 }

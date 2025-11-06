@@ -1,6 +1,7 @@
 ﻿using DirectoryService.Application;
 using DirectoryService.Infrastructure;
 using DirectoryService.Shared;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
 
 namespace DirectoryService.Presentation;
@@ -33,6 +34,11 @@ public static class DependencyInjection
 
                 return Task.CompletedTask;
             });
+        });
+
+        services.Configure<ApiBehaviorOptions>(options =>
+        {
+            options.SuppressModelStateInvalidFilter = true;
         });
 
         return services;

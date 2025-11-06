@@ -3,8 +3,10 @@ using DirectoryService.Application.Locations;
 using DirectoryService.Domain.Locations;
 using DirectoryService.Domain.Locations.ValueObjects;
 using DirectoryService.Shared;
+using DirectoryService.Shared.Locations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Npgsql;
 
 namespace DirectoryService.Infrastructure.Locations;
 
@@ -33,10 +35,36 @@ public class LocationsRepository : ILocationsRepository
 
             return location.Id.Value;
         }
+        catch (DbUpdateException e) when (e.InnerException is PostgresException pgEx)
+        {
+            if (pgEx is { SqlState: PostgresErrorCodes.UniqueViolation, ConstraintName: not null } &&
+                pgEx.ConstraintName.Contains("name"))
+            {
+                _logger.LogError(e, "Database update error while creating a new location with {name}",
+                    location.Name.Value);
+                return LocationsErrors.NameConflict(location.Name.Value).ToErrors();
+            }
+
+            if (pgEx is { SqlState: PostgresErrorCodes.UniqueViolation, ConstraintName: not null } &&
+                pgEx.ConstraintName.Contains("address"))
+            {
+                _logger.LogError(e, "Database update error while creating a new location with {address}",
+                    location.Address);
+                return LocationsErrors.AddressConflict().ToErrors();
+            }
+
+            _logger.LogError(e, "Error updating the database with {location}", location);
+            return LocationsErrors.DatabaseError().ToErrors();
+        }
+        catch (OperationCanceledException oce)
+        {
+            _logger.LogError(oce, "Operation was cancelled while updating the database with {location}", location);
+            return LocationsErrors.OperationCancelled().ToErrors();
+        }
         catch (Exception e)
         {
-            _logger.LogError(e.Message, "Fail to create location");
-            return GeneralErrors.Failure().ToErrors();
+            _logger.LogError(e, "Unexpected error while updating the database with {location}", location);
+            return LocationsErrors.DatabaseError().ToErrors();
         }
     }
 
@@ -65,48 +93,6 @@ public class LocationsRepository : ILocationsRepository
                 "Failed to check existence of locations by IDs. Requested IDs: {RequestedIds}",
                 requestedIds.Select(x => x.Value));
 
-            return GeneralErrors.Failure().ToErrors();
-        }
-    }
-
-    public async Task<Result<bool, Errors>> ExistsByNameAsync(
-        LocationName locationName,
-        CancellationToken cancellationToken = default)
-    {
-        try
-        {
-            bool result = await _dbContext.Locations.AnyAsync(
-                location => location.Name.Value == locationName.Value,
-                cancellationToken);
-
-            return result;
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(e, "Failed to check if location exists by name: {LocationName}", locationName.Value);
-            return GeneralErrors.Failure().ToErrors();
-        }
-    }
-
-    public async Task<Result<bool, Errors>> ExistsByAddressAsync(
-        Address address,
-        CancellationToken cancellationToken = default)
-    {
-        try
-        {
-            bool result = await _dbContext.Locations.AnyAsync(
-                l =>
-                    l.Address.City == address.City &&
-                    l.Address.Street == address.Street &&
-                    l.Address.House == address.House &&
-                    l.Address.PostalCode == address.PostalCode,
-                cancellationToken);
-
-            return result;
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(e, "Failed to check if location exists by address: {Address}", address);
             return GeneralErrors.Failure().ToErrors();
         }
     }

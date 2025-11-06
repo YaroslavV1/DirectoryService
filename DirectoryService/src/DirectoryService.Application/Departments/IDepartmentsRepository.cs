@@ -13,11 +13,6 @@ public interface IDepartmentsRepository
         DepartmentId departmentId,
         CancellationToken cancellationToken = default);
 
-    Task<Result<bool, Error>> ExistsWithSameIdentifierAsync(
-        DepartmentId parentId,
-        Identifier identifier,
-        CancellationToken cancellationToken = default);
-
     Task<Result<bool, Error>> CheckIfAllDepartmentsExistAsync(
         IEnumerable<Guid> departmentIds,
         CancellationToken cancellationToken = default);

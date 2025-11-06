@@ -2,8 +2,10 @@
 using DirectoryService.Application.Positions;
 using DirectoryService.Domain.Positions;
 using DirectoryService.Shared;
+using DirectoryService.Shared.Positions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Npgsql;
 
 namespace DirectoryService.Infrastructure.Positions;
 
@@ -32,27 +34,29 @@ public class PositionsRepository : IPositionRepository
 
             return position.Id.Value;
         }
+        catch (DbUpdateException e) when (e.InnerException is PostgresException pgEx)
+        {
+            if (pgEx is { SqlState: PostgresErrorCodes.UniqueViolation, ConstraintName: not null } &&
+                pgEx.ConstraintName.Contains("name"))
+            {
+                _logger.LogError(e, "Database update error while creating a new position with name {name}",
+                    position.Name.Value);
+                return PositionsErrors.NameConflict(position.Name.Value);
+            }
+
+            _logger.LogError(e, "Error updating the database with {position}", position.Id.Value);
+            return PositionsErrors.DatabaseError();
+        }
+        catch (OperationCanceledException oce)
+        {
+            _logger.LogError(oce, "Operation was cancelled while updating the database with {position}",
+                position.Id.Value);
+            return PositionsErrors.OperationCancelled();
+        }
         catch (Exception e)
         {
-            _logger.LogError(e.Message, "Fail to create position");
-            return GeneralErrors.Failure();
-        }
-    }
-
-    public async Task<Result<bool, Error>> ExistsByNameAsync(string name, CancellationToken cancellationToken = default)
-    {
-        try
-        {
-            bool result = await _dbContext.Positions.AnyAsync(
-                p => p.Name.Value == name && p.IsActive,
-                cancellationToken);
-
-            return result;
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(e.Message, "Failed to check if position exists by name: {name}", name);
-            return GeneralErrors.Failure();
+            _logger.LogError(e, "Unexpected error while updating the database with {position}", position.Id.Value);
+            return PositionsErrors.DatabaseError();
         }
     }
 }

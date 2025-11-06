@@ -12,13 +12,4 @@ public interface ILocationsRepository
     public Task<Result<bool, Errors>> CheckAllLocationsExistByIds(
         IEnumerable<LocationId> requestedIds,
         CancellationToken cancellationToken = default);
-
-
-    public Task<Result<bool, Errors>> ExistsByNameAsync(
-        LocationName name,
-        CancellationToken cancellationToken = default);
-
-    public Task<Result<bool, Errors>> ExistsByAddressAsync(
-        Address address,
-        CancellationToken cancellationToken = default);
 }

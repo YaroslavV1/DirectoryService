@@ -69,16 +69,6 @@ public class CreateDepartmentHandler : ICommandHandler<Result<Guid, Errors>, Cre
 
         var identifier = Identifier.Create(command.Request.Identifier).Value;
 
-        var identifierResult = await _departmentsRepository.ExistsWithSameIdentifierAsync(
-            departmentParent?.Id,
-            identifier,
-            cancellationToken);
-
-        if (identifierResult.IsFailure)
-        {
-            return identifierResult.Error.ToErrors();
-        }
-
         var departmentId = DepartmentId.NewId();
         var departmentLocations = locationIds
             .Select(locationId => DepartmentLocation.Create(

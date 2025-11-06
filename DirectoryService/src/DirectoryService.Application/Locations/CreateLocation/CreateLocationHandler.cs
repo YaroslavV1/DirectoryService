@@ -52,20 +52,12 @@ public class CreateLocationHandler : ICommandHandler<Result<Guid, Errors>, Creat
             address,
             timeZone);
 
-        var locationNameExistsResult = await _locationsRepository.ExistsByNameAsync(locationName, cancellationToken);
+        var locationIdResult = await _locationsRepository.Create(location, cancellationToken);
 
-        if (locationNameExistsResult.Value)
-            return GeneralErrors.AlreadyExists("Location").ToErrors();
+        if (locationIdResult.IsFailure)
+            return locationIdResult.Error;
+        _logger.LogInformation("Successfully created location {location}", locationIdResult.Value);
 
-        var locationAddressExistsResult = await _locationsRepository.ExistsByAddressAsync(address, cancellationToken);
-
-        if (locationAddressExistsResult.Value)
-            return GeneralErrors.AlreadyExists("Location").ToErrors();
-
-        var locationId = await _locationsRepository.Create(location, cancellationToken);
-
-        _logger.LogInformation("Successfully created location {location}", locationId.Value);
-
-        return locationId;
+        return locationIdResult;
     }
 }

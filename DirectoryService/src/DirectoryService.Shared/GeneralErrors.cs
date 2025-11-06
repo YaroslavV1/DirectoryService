@@ -33,7 +33,6 @@ public static class GeneralErrors
         return Error.NotFound("record.is.not-found", $"{label} не найдено");
     }
 
-
     public static Error ContainsDuplicates(string? name = null)
     {
         string label = name == null ? string.Empty : " " + name + " ";
@@ -41,7 +40,6 @@ public static class GeneralErrors
         return Error.Validation(
             "collection.has.duplicates",
             $"Поле{label}содержит дублирующиеся значения.",
-            name
-        );
+            name);
     }
 }

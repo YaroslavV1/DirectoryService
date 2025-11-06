@@ -1,5 +1,4 @@
-﻿using System.Xml.Schema;
-using CSharpFunctionalExtensions;
+﻿using CSharpFunctionalExtensions;
 using DirectoryService.Application.Abstractions;
 using DirectoryService.Application.Departments;
 using DirectoryService.Application.Validation;
@@ -46,18 +45,6 @@ public class CreatePositionHandler : ICommandHandler<Result<Guid, Errors>, Creat
         }
 
         var positionName = PositionName.Create(command.Request.Name).Value;
-
-        var positionNameResult = await _positionRepository.ExistsByNameAsync(
-            positionName.Value,
-            cancellationToken);
-
-        if (positionNameResult.IsFailure)
-            return positionNameResult.Error.ToErrors();
-        if (positionNameResult.Value)
-        {
-            _logger.LogError("Position Name Already Exists");
-            return GeneralErrors.AlreadyExists("PositionName").ToErrors();
-        }
 
         var departmentIdsResult = await _departmentsRepository.CheckIfAllDepartmentsExistAsync(
             command.Request.DepartmentsIds,
