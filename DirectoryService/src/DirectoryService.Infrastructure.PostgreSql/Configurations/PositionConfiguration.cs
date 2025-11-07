@@ -20,16 +20,21 @@ public class PositionConfiguration : IEntityTypeConfiguration<Position>
                 p => p.Value,
                 id => PositionId.Create(id));
 
-        builder.ComplexProperty(p => p.Name, pb =>
+        builder.OwnsOne(p => p.Name, pb =>
         {
             pb.Property(pn => pn.Value)
                 .IsRequired()
                 .HasColumnName("name")
                 .HasMaxLength(LengthConstants.MAX_POSITION_NAME);
+
+            pb.HasIndex(pn => pn.Value)
+                .IsUnique()
+                .HasDatabaseName("ux_positions_name")
+                .HasFilter("\"is_active\" IS TRUE");
         });
 
         builder.Property(p => p.Description)
-            .IsRequired()
+            .IsRequired(false)
             .HasColumnName("description")
             .HasMaxLength(LengthConstants.MAX_POSITION_DESCRIPTION);
 

@@ -20,15 +20,20 @@ public class LocationConfiguration : IEntityTypeConfiguration<Location>
                 li => li.Value,
                 id => LocationId.Create(id));
 
-        builder.ComplexProperty(l => l.Name, lb =>
+        builder.OwnsOne(l => l.Name, lb =>
         {
             lb.Property(ln => ln.Value)
                 .IsRequired()
                 .HasColumnName("name")
                 .HasMaxLength(LengthConstants.MAX_LOCATION_NAME);
+
+            lb.HasIndex(ln => ln.Value)
+                .IsUnique()
+                .HasDatabaseName("ux_locations_name")
+                .HasFilter("\"is_active\" IS TRUE");
         });
 
-        builder.ComplexProperty(l => l.Address, lb =>
+        builder.OwnsOne(l => l.Address, lb =>
         {
             lb.Property(l => l.City)
                 .IsRequired()
@@ -45,6 +50,15 @@ public class LocationConfiguration : IEntityTypeConfiguration<Location>
             lb.Property(l => l.Street)
                 .IsRequired()
                 .HasColumnName("street");
+
+            lb.HasIndex(a =>
+                    new { a.City,
+                        a.Street,
+                        a.House,
+                        a.PostalCode, })
+                .IsUnique()
+                .HasDatabaseName("ux_locations_full_address")
+                .HasFilter("\"is_active\" IS TRUE");
         });
 
         builder.ComplexProperty(l => l.TimeZone, lb =>

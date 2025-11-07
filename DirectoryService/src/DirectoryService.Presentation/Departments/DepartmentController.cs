@@ -1,24 +1,24 @@
 ﻿using CSharpFunctionalExtensions;
 using DirectoryService.Application.Abstractions;
-using DirectoryService.Application.Locations.CreateLocation;
-using DirectoryService.Contracts.Locations;
+using DirectoryService.Application.Departments.CreateDepartment;
+using DirectoryService.Contracts.Departments;
 using DirectoryService.Presentation.EndpointResults;
 using DirectoryService.Shared;
 using Microsoft.AspNetCore.Mvc;
 
-namespace DirectoryService.Presentation.Locations;
+namespace DirectoryService.Presentation.Departments;
 
 [ApiController]
-[Route("api/locations")]
-public class LocationController : ControllerBase
+[Route("api/departments")]
+public class DepartmentController: ControllerBase
 {
     [HttpPost]
     public async Task<EndpointResult<Guid>> Create(
-        [FromServices] ICommandHandler<Result<Guid, Errors>, CreateLocationCommand> handle,
-        [FromBody] CreateLocationRequest request,
+        [FromServices] ICommandHandler<Result<Guid, Errors>, CreateDepartmentCommand> handle,
+        [FromBody] CreateDepartmentRequest request,
         CancellationToken cancellationToken = default)
     {
-        var command = new CreateLocationCommand(request);
+        var command = new CreateDepartmentCommand(request);
 
         var result = await handle.Handle(command, cancellationToken);
 

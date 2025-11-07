@@ -4,15 +4,17 @@ using DirectoryService.Shared;
 
 namespace DirectoryService.Domain.Departments;
 
-public sealed class Department: Shared.Entity<DepartmentId>
+public sealed class Department : Shared.Entity<DepartmentId>
 {
-    private readonly List<Department> _childDepartments = [];
+    private readonly List<Department> _childrenDepartments = [];
     private readonly List<DepartmentPosition.DepartmentPosition> _positions = [];
     private readonly List<DepartmentLocation.DepartmentLocation> _locations = [];
 
     // ef core
     private Department(DepartmentId id)
-        : base(id) { }
+        : base(id)
+    {
+    }
 
     private Department(
         DepartmentId departmentId,
@@ -29,7 +31,7 @@ public sealed class Department: Shared.Entity<DepartmentId>
         ParentId = parentId;
         Path = path;
         Depth = depth;
-        ChildrenCount = ChildDepartments.Count;
+        ChildrenCount = ChildrenDepartments.Count;
         CreatedAt = DateTime.UtcNow;
         UpdatedAt = DateTime.UtcNow;
         _locations = locations.ToList();
@@ -53,7 +55,7 @@ public sealed class Department: Shared.Entity<DepartmentId>
 
     public DateTime UpdatedAt { get; private set; }
 
-    public IReadOnlyList<Department> ChildDepartments => _childDepartments;
+    public IReadOnlyList<Department> ChildrenDepartments => _childrenDepartments;
 
     public IReadOnlyList<DepartmentPosition.DepartmentPosition> Positions => _positions;
 
@@ -97,12 +99,15 @@ public sealed class Department: Shared.Entity<DepartmentId>
 
         var path = parent.Path.CreateChild(identifier);
 
+        parent.ChildrenCount++;
+
         return new Department(
             departmentId ?? DepartmentId.NewId(),
             name,
             identifier,
             path,
             parent.Depth + 1,
-            departmentLocationsList);
+            departmentLocationsList,
+            parent.Id);
     }
 }
