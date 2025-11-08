@@ -1,5 +1,5 @@
-﻿using DirectoryService.Domain.DepartmentLocation;
-using DirectoryService.Domain.DepartmentLocation.ValueObjects;
+﻿using DirectoryService.Domain.DepartmentLocations;
+using DirectoryService.Domain.DepartmentLocations.ValueObjects;
 using DirectoryService.Domain.Departments.ValueObjects;
 using DirectoryService.Domain.Locations.ValueObjects;
 using Microsoft.EntityFrameworkCore;

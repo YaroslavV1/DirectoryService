@@ -1,11 +1,12 @@
-﻿using DirectoryService.Domain.Locations.ValueObjects;
+﻿using DirectoryService.Domain.DepartmentLocations;
+using DirectoryService.Domain.Locations.ValueObjects;
 using DirectoryService.Domain.Shared;
 
 namespace DirectoryService.Domain.Locations;
 
 public class Location: Entity<LocationId>
 {
-    private readonly List<DepartmentLocation.DepartmentLocation> _departments = [];
+    private readonly List<DepartmentLocation> _departments = [];
 
     // ef core
     private Location(LocationId id)
@@ -39,7 +40,7 @@ public class Location: Entity<LocationId>
 
     public DateTime UpdatedAt { get; private set; }
 
-    public IReadOnlyList<DepartmentLocation.DepartmentLocation> Departments => _departments;
+    public IReadOnlyList<DepartmentLocation> Departments => _departments;
 
     public static Location Create(
         LocationId locationId,

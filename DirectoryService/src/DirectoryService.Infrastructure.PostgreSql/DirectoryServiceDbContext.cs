@@ -1,5 +1,5 @@
-﻿using DirectoryService.Domain.DepartmentLocation;
-using DirectoryService.Domain.DepartmentPosition;
+﻿using DirectoryService.Domain.DepartmentLocations;
+using DirectoryService.Domain.DepartmentPositions;
 using DirectoryService.Domain.Departments;
 using DirectoryService.Domain.Locations;
 using DirectoryService.Domain.Positions;

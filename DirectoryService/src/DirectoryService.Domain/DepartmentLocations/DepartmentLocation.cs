@@ -1,10 +1,10 @@
 ﻿using CSharpFunctionalExtensions;
-using DirectoryService.Domain.DepartmentLocation.ValueObjects;
+using DirectoryService.Domain.DepartmentLocations.ValueObjects;
 using DirectoryService.Domain.Departments.ValueObjects;
 using DirectoryService.Domain.Locations.ValueObjects;
 using DirectoryService.Shared;
 
-namespace DirectoryService.Domain.DepartmentLocation;
+namespace DirectoryService.Domain.DepartmentLocations;
 
 public class DepartmentLocation
 {

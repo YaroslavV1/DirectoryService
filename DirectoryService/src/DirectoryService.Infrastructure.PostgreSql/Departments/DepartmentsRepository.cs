@@ -81,15 +81,17 @@ public class DepartmentsRepository : IDepartmentsRepository
         }
     }
 
-    public async Task<Result<Department?, Error>> GetByIdAsync(
+    public async Task<Result<Department, Error>> GetByIdAsync(
         DepartmentId departmentId,
         CancellationToken cancellationToken = default)
     {
         try
         {
             var department =
-                await _dbContext.Departments.FirstOrDefaultAsync(
-                    d => d.Id == departmentId,
+                await _dbContext.Departments
+                    .Include(d => d.Locations)
+                    .FirstOrDefaultAsync(
+                    d => d.Id == departmentId && d.IsActive,
                     cancellationToken);
 
             if (department is null)
@@ -99,7 +101,7 @@ public class DepartmentsRepository : IDepartmentsRepository
         }
         catch (Exception e)
         {
-            _logger.LogError(e.Message, "Failed to get department");
+            _logger.LogError(e.Message, "Failed to get department by {id}", departmentId.Value);
             return GeneralErrors.Failure();
         }
     }

@@ -1,4 +1,4 @@
-﻿namespace DirectoryService.Domain.DepartmentLocation.ValueObjects;
+﻿namespace DirectoryService.Domain.DepartmentLocations.ValueObjects;
 
 public record DepartmentLocationId
 {
