@@ -74,18 +74,11 @@ public class LocationsRepository : ILocationsRepository
     {
         try
         {
-            var existingIds = await _dbContext.Locations
-                .Select(l => l.Id.Value)
-                .ToListAsync(cancellationToken);
+            bool isAllLocationsExist = await _dbContext.Locations
+                .Where(l => requestedIds.Contains(l.Id) && l.IsActive)
+                .CountAsync(cancellationToken) == requestedIds.Count();
 
-            var requestedIdList = requestedIds.Select(id => id.Value).ToList();
-
-            var missingIds = requestedIdList.Except(existingIds).ToList();
-
-            if (missingIds.Any())
-                return GeneralErrors.NotFound("LocationId").ToErrors();
-
-            return true;
+            return isAllLocationsExist;
         }
         catch (Exception e)
         {

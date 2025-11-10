@@ -9,7 +9,7 @@ public interface IDepartmentsRepository
 {
     Task<Result<Guid, Error>> Create(Department department, CancellationToken cancellationToken = default);
 
-    Task<Result<Department?, Error>> GetByIdAsync(
+    Task<Result<Department, Error>> GetByIdAsync(
         DepartmentId departmentId,
         CancellationToken cancellationToken = default);
 

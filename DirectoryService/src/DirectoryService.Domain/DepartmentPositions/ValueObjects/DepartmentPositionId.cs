@@ -1,4 +1,4 @@
-﻿namespace DirectoryService.Domain.DepartmentPosition.ValueObjects;
+﻿namespace DirectoryService.Domain.DepartmentPositions.ValueObjects;
 
 public record DepartmentPositionId
 {

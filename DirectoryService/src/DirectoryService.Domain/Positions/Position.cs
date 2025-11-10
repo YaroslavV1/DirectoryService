@@ -1,4 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
+using DirectoryService.Domain.DepartmentPositions;
 using DirectoryService.Domain.Positions.ValueObjects;
 using DirectoryService.Domain.Shared;
 using DirectoryService.Shared;
@@ -7,7 +8,7 @@ namespace DirectoryService.Domain.Positions;
 
 public class Position : Shared.Entity<PositionId>
 {
-    private readonly List<DepartmentPosition.DepartmentPosition> _departments = [];
+    private readonly List<DepartmentPosition> _departments = [];
 
     // ef core
     private Position(PositionId id)
@@ -18,7 +19,7 @@ public class Position : Shared.Entity<PositionId>
     private Position(
         PositionId positionId,
         PositionName positionName,
-        IEnumerable<DepartmentPosition.DepartmentPosition> departments,
+        IEnumerable<DepartmentPosition> departments,
         string? description = null)
         : base(positionId)
     {
@@ -39,13 +40,13 @@ public class Position : Shared.Entity<PositionId>
 
     public DateTime UpdatedAt { get; private set; }
 
-    public IReadOnlyList<DepartmentPosition.DepartmentPosition> Departments => _departments;
+    public IReadOnlyList<DepartmentPosition> Departments => _departments;
 
     public static Result<Position, Error> Create(
         PositionId positionId,
         PositionName positionName,
         string? description,
-        IEnumerable<DepartmentPosition.DepartmentPosition> departmentsPosition)
+        IEnumerable<DepartmentPosition> departmentsPosition)
     {
         if (description == null)
         {

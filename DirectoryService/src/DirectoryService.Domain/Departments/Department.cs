@@ -1,4 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
+using DirectoryService.Domain.DepartmentLocations;
+using DirectoryService.Domain.DepartmentPositions;
 using DirectoryService.Domain.Departments.ValueObjects;
 using DirectoryService.Shared;
 
@@ -7,8 +9,8 @@ namespace DirectoryService.Domain.Departments;
 public sealed class Department : Shared.Entity<DepartmentId>
 {
     private readonly List<Department> _childrenDepartments = [];
-    private readonly List<DepartmentPosition.DepartmentPosition> _positions = [];
-    private readonly List<DepartmentLocation.DepartmentLocation> _locations = [];
+    private readonly List<DepartmentPosition> _positions = [];
+    private readonly List<DepartmentLocation> _locations = [];
 
     // ef core
     private Department(DepartmentId id)
@@ -22,7 +24,7 @@ public sealed class Department : Shared.Entity<DepartmentId>
         Identifier identifier,
         DepartmentPath path,
         int depth,
-        IEnumerable<DepartmentLocation.DepartmentLocation> locations,
+        IEnumerable<DepartmentLocation> locations,
         DepartmentId? parentId = null)
         : base(departmentId)
     {
@@ -57,14 +59,14 @@ public sealed class Department : Shared.Entity<DepartmentId>
 
     public IReadOnlyList<Department> ChildrenDepartments => _childrenDepartments;
 
-    public IReadOnlyList<DepartmentPosition.DepartmentPosition> Positions => _positions;
+    public IReadOnlyList<DepartmentPosition> Positions => _positions;
 
-    public IReadOnlyList<DepartmentLocation.DepartmentLocation> Locations => _locations;
+    public IReadOnlyList<DepartmentLocation> Locations => _locations;
 
     public static Result<Department, Error> CreateParent(
         DepartmentName name,
         Identifier identifier,
-        IEnumerable<DepartmentLocation.DepartmentLocation> departmentLocations,
+        IEnumerable<DepartmentLocation> departmentLocations,
         DepartmentId? departmentId = null)
     {
         var departmentLocationList = departmentLocations.ToList();
@@ -87,7 +89,7 @@ public sealed class Department : Shared.Entity<DepartmentId>
         DepartmentName name,
         Identifier identifier,
         Department parent,
-        IEnumerable<DepartmentLocation.DepartmentLocation> departmentLocations,
+        IEnumerable<DepartmentLocation> departmentLocations,
         DepartmentId? departmentId = null)
     {
         var departmentLocationsList = departmentLocations.ToList();
@@ -109,5 +111,21 @@ public sealed class Department : Shared.Entity<DepartmentId>
             parent.Depth + 1,
             departmentLocationsList,
             parent.Id);
+    }
+
+    public UnitResult<Error> UpdateLocations(IEnumerable<DepartmentLocation> deparmentLocations)
+    {
+        if (!deparmentLocations.Any())
+        {
+            return Error.Validation(
+                "department.locations.validation",
+                "Department locations must contain at least one location");
+        }
+
+        _locations.Clear();
+        _locations.AddRange(deparmentLocations);
+        UpdatedAt = DateTime.UtcNow;
+
+        return UnitResult.Success<Error>();
     }
 }
