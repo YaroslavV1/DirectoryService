@@ -22,7 +22,7 @@ public class DepartmentConfiguration : IEntityTypeConfiguration<Department>
                 d => d.Value,
                 id => DepartmentId.Create(id));
 
-        builder.ComplexProperty(d => d.Name, dnb =>
+        builder.OwnsOne(d => d.Name, dnb =>
         {
             dnb.Property(d => d.Value)
                 .IsRequired()
@@ -45,11 +45,12 @@ public class DepartmentConfiguration : IEntityTypeConfiguration<Department>
                 d => d!.Value,
                 id => DepartmentId.Create(id));
 
-        builder.ComplexProperty(d => d.Path, dnb =>
+        builder.OwnsOne(d => d.Path, dnb =>
         {
             dnb.Property(d => d.Value)
                 .IsRequired()
-                .HasColumnName("path");
+                .HasColumnName("path")
+                .HasColumnType("ltree");
         });
 
         builder.Property(d => d.Depth)

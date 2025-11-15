@@ -1,4 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
+using Dapper;
 using DirectoryService.Application.Departments;
 using DirectoryService.Domain.Departments;
 using DirectoryService.Domain.Departments.ValueObjects;
@@ -91,8 +92,31 @@ public class DepartmentsRepository : IDepartmentsRepository
                 await _dbContext.Departments
                     .Include(d => d.Locations)
                     .FirstOrDefaultAsync(
-                    d => d.Id == departmentId && d.IsActive,
-                    cancellationToken);
+                        d => d.Id == departmentId && d.IsActive,
+                        cancellationToken);
+
+            if (department is null)
+                return GeneralErrors.NotFound("Department");
+
+            return department;
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e.Message, "Failed to get department by {id}", departmentId.Value);
+            return GeneralErrors.Failure();
+        }
+    }
+
+    public async Task<Result<Department, Error>> GetByIdWithLockAsync(
+        DepartmentId departmentId,
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var department = await _dbContext.Departments
+                .FromSql(
+                    $"SELECT * FROM departments WHERE id = {departmentId.Value} FOR UPDATE")
+                .FirstOrDefaultAsync(cancellationToken);
 
             if (department is null)
                 return GeneralErrors.NotFound("Department");
@@ -133,6 +157,109 @@ public class DepartmentsRepository : IDepartmentsRepository
                 departmentIds);
 
             return GeneralErrors.Failure();
+        }
+    }
+
+    public async Task<Result<bool, Error>> IsDescendant(
+        DepartmentId potentialDescendantId,
+        DepartmentId ancestorId,
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var dbConn = _dbContext.Database.GetDbConnection();
+
+            const string sql = @"
+            SELECT EXISTS (
+                SELECT 1 
+                FROM departments descendant
+                JOIN departments ancestor ON ancestor.id = @ancestorId
+                WHERE descendant.id = @potentialDescendantId
+                  AND descendant.path <@ ancestor.path
+                  AND descendant.id != ancestor.id
+            )";
+
+            bool isDescendant = await dbConn.QuerySingleAsync<bool>(
+                sql,
+                new { potentialDescendantId = potentialDescendantId.Value, ancestorId = ancestorId.Value, });
+
+            return isDescendant;
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(
+                e,
+                "Failed to check if department {descendantId} is descendant of {ancestorId}",
+                potentialDescendantId, ancestorId);
+            return DepartmentsErrors.DatabaseError();
+        }
+    }
+
+    public async Task<UnitResult<Error>> LockDescendant(
+        Department department,
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var parentPath = department.Path.Value;
+
+            await _dbContext.Database.ExecuteSqlAsync(
+                $"""
+                 SELECT id 
+                 FROM departments 
+                 WHERE path <@ {parentPath}::ltree 
+                   AND path != {parentPath}::ltree 
+                 FOR UPDATE
+                 """,
+                cancellationToken);
+
+            return UnitResult.Success<Error>();
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Failed to lock descendants for department {id}", department.Id.Value);
+            return GeneralErrors.Failure();
+        }
+    }
+
+    public async Task<UnitResult<Error>> UpdateDescendantsPathAndDepthAsync(
+        DepartmentId departmentId,
+        DepartmentPath oldPath, DepartmentPath newPath,
+        int depthDifference, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            const string sql = """
+                               UPDATE departments
+                               SET 
+                               path = @newPath::ltree || subpath(path, nlevel(@oldPath::ltree)),
+                               depth = depth + @depthDifference,
+                               updated_at = NOW()
+                               WHERE 
+                               path <@ @oldPath::ltree 
+                               AND id != @departmentId
+                               AND is_active = true
+                               """;
+
+            var parameters = new object[]
+            {
+                new NpgsqlParameter("@newPath", newPath.Value), new NpgsqlParameter("@oldPath", oldPath.Value),
+                new NpgsqlParameter("@depthDifference", depthDifference),
+                new NpgsqlParameter("@departmentId", departmentId.Value),
+            };
+
+            await _dbContext.Database.ExecuteSqlRawAsync(
+                sql,
+                parameters,
+                cancellationToken);
+
+            return UnitResult.Success<Error>();
+        }
+        catch (Exception ex)
+        {
+            return Error.Failure(
+                "department.update.descendants",
+                $"Failed to update descendants: {ex.Message}");
         }
     }
 }
