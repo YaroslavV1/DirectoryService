@@ -1,6 +1,4 @@
-﻿using DirectoryService.Domain.DepartmentLocations;
-using DirectoryService.Domain.DepartmentPositions;
-using DirectoryService.Domain.Departments;
+﻿using DirectoryService.Domain.Departments;
 using DirectoryService.Domain.Locations;
 using DirectoryService.Domain.Positions;
 using Microsoft.EntityFrameworkCore;
@@ -12,15 +10,11 @@ public class DirectoryServiceDbContext : DbContext
 {
     private readonly string _connectionString;
 
-    public DbSet<Department> Departments { get; set; }
+    public DbSet<Department> Departments { get; set; } = null!;
 
-    public DbSet<Position> Positions { get; set; }
+    public DbSet<Position> Positions { get; set; } = null!;
 
-    public DbSet<Location> Locations { get; set; }
-
-    public DbSet<DepartmentLocation> DepartmentLocations { get; set; }
-
-    public DbSet<DepartmentPosition> DepartmentPositions { get; set; }
+    public DbSet<Location> Locations { get; set; } = null!;
 
     public DirectoryServiceDbContext(string connectionString)
     {
@@ -38,6 +32,7 @@ public class DirectoryServiceDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.HasPostgresExtension("ltree");
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(DirectoryServiceDbContext).Assembly);
     }
 

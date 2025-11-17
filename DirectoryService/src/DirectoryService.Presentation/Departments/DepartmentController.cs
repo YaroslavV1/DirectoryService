@@ -1,6 +1,7 @@
 ﻿using CSharpFunctionalExtensions;
 using DirectoryService.Application.Abstractions;
 using DirectoryService.Application.Departments.CreateDepartment;
+using DirectoryService.Application.Departments.MoveDepartment;
 using DirectoryService.Application.Departments.UpdateDepartmentLocations;
 using DirectoryService.Contracts.Departments;
 using DirectoryService.Presentation.EndpointResults;
@@ -11,7 +12,7 @@ namespace DirectoryService.Presentation.Departments;
 
 [ApiController]
 [Route("api/departments")]
-public class DepartmentController: ControllerBase
+public class DepartmentController : ControllerBase
 {
     [HttpPost]
     public async Task<EndpointResult<Guid>> Create(
@@ -34,6 +35,20 @@ public class DepartmentController: ControllerBase
         CancellationToken cancellationToken = default)
     {
         var command = new UpdateDepartmentLocationsCommand(departmentId, request);
+
+        var result = await handle.Handle(command, cancellationToken);
+
+        return result;
+    }
+
+    [HttpPatch("{departmentId}/parent")]
+    public async Task<EndpointResult<Guid>> UpdateParent(
+        [FromServices] ICommandHandler<Result<Guid, Errors>, MoveDepartmentCommand> handle,
+        [FromRoute] Guid departmentId,
+        [FromBody] MoveDepartmentRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var command = new MoveDepartmentCommand(departmentId, request);
 
         var result = await handle.Handle(command, cancellationToken);
 

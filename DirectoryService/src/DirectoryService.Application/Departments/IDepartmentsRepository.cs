@@ -13,7 +13,27 @@ public interface IDepartmentsRepository
         DepartmentId departmentId,
         CancellationToken cancellationToken = default);
 
+    Task<Result<Department, Error>> GetByIdWithLockAsync(
+        DepartmentId departmentId,
+        CancellationToken cancellationToken = default);
+
     Task<Result<bool, Error>> CheckIfAllDepartmentsExistAsync(
         IEnumerable<Guid> departmentIds,
+        CancellationToken cancellationToken = default);
+
+    Task<Result<bool, Error>> IsDescendant(
+        DepartmentId potentialDescendantId,
+        DepartmentId ancestorId,
+        CancellationToken cancellationToken = default);
+
+    Task<UnitResult<Error>> LockDescendant(
+        Department department,
+        CancellationToken cancellationToken = default);
+
+    Task<UnitResult<Error>> UpdateDescendantsPathAndDepthAsync(
+        DepartmentId departmentId,
+        DepartmentPath oldPath,
+        DepartmentPath newPath,
+        int depthDifference,
         CancellationToken cancellationToken = default);
 }

@@ -113,6 +113,25 @@ public sealed class Department : Shared.Entity<DepartmentId>
             parent.Id);
     }
 
+    public UnitResult<Error> UpdateParent(Department? newParent)
+    {
+        if (newParent is null)
+        {
+            ParentId = null;
+            Path = DepartmentPath.CreateParent(Identifier);
+            Depth = 0;
+        }
+        else
+        {
+            ParentId = newParent.Id;
+            Path = newParent.Path.CreateChild(Identifier);
+            Depth = newParent.Depth + 1;
+        }
+
+        UpdatedAt = DateTime.UtcNow;
+        return UnitResult.Success<Error>();
+    }
+
     public UnitResult<Error> UpdateLocations(IEnumerable<DepartmentLocation> deparmentLocations)
     {
         if (!deparmentLocations.Any())
