@@ -57,10 +57,6 @@ public class DepartmentConfiguration : IEntityTypeConfiguration<Department>
             .IsRequired()
             .HasColumnName("depth");
 
-        builder.Property(d => d.ChildrenCount)
-            .IsRequired()
-            .HasColumnName("children_count");
-
         builder.Property(d => d.IsActive)
             .IsRequired()
             .HasColumnName("is_active");
