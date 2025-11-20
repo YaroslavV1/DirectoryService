@@ -1,18 +1,11 @@
-﻿using CSharpFunctionalExtensions;
-using DirectoryService.Application.Departments.CreateDepartment;
-using DirectoryService.Contracts.Departments;
-using DirectoryService.Contracts.Locations;
-using DirectoryService.Domain.Departments;
+﻿using DirectoryService.Contracts.Locations;
 using DirectoryService.Domain.Departments.ValueObjects;
-using DirectoryService.Domain.Locations;
 using DirectoryService.Domain.Locations.ValueObjects;
-using DirectoryService.Shared;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace DirectoryService.IntegrationTests.Departments;
 
-public class CreateDepartmentTests : DirectoryBaseTests
+public class CreateDepartmentTests : DepartmentBaseTests
 {
     public CreateDepartmentTests(DirectoryTestWebFactory factory)
         : base(factory)
@@ -206,56 +199,5 @@ public class CreateDepartmentTests : DirectoryBaseTests
                 .FirstAsync(CancellationToken.None));
 
         Assert.Equal(2, department.Locations.Count());
-    }
-
-    private async Task<Result<Guid, Errors>> CreateDepartment(
-        string name,
-        string identifier,
-        IEnumerable<Guid> locationIds,
-        Guid? parentId = null)
-    {
-        var result = await ExecuteHandler(async sut =>
-        {
-            var command = new CreateDepartmentCommand(new CreateDepartmentRequest(
-                name,
-                identifier,
-                locationIds,
-                parentId));
-
-            return await sut.Handle(command, CancellationToken.None);
-        });
-
-        return result;
-    }
-
-    private async Task<LocationId> CreateLocation(CreateLocationRequest locationRequest)
-    {
-        return await ExecuteInDb(async (context) =>
-        {
-            var location = Location.Create(
-                LocationId.NewId(),
-                LocationName.Create(locationRequest.Name).Value,
-                Address.Create(
-                    locationRequest.Address.City,
-                    locationRequest.Address.Street,
-                    locationRequest.Address.PostalCode,
-                    locationRequest.Address.House).Value,
-                LocationTimeZone.Create(locationRequest.TimeZone).Value);
-
-            context.Locations.Add(location);
-
-            await context.SaveChangesAsync();
-
-            return location.Id;
-        });
-    }
-
-    private async Task<T> ExecuteHandler<T>(Func<CreateDepartmentHandler, Task<T>> action)
-    {
-        await using var scope = Services.CreateAsyncScope();
-
-        var sut = scope.ServiceProvider.GetRequiredService<CreateDepartmentHandler>();
-
-        return await action(sut);
     }
 }
