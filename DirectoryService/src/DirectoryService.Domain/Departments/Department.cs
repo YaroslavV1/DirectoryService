@@ -33,7 +33,6 @@ public sealed class Department : Shared.Entity<DepartmentId>
         ParentId = parentId;
         Path = path;
         Depth = depth;
-        ChildrenCount = ChildrenDepartments.Count;
         CreatedAt = DateTime.UtcNow;
         UpdatedAt = DateTime.UtcNow;
         _locations = locations.ToList();
@@ -48,8 +47,6 @@ public sealed class Department : Shared.Entity<DepartmentId>
     public DepartmentPath Path { get; private set; } = default!;
 
     public int Depth { get; private set; }
-
-    public int ChildrenCount { get; private set; }
 
     public bool IsActive { get; private set; } = true;
 
@@ -100,8 +97,6 @@ public sealed class Department : Shared.Entity<DepartmentId>
         }
 
         var path = parent.Path.CreateChild(identifier);
-
-        parent.ChildrenCount++;
 
         return new Department(
             departmentId ?? DepartmentId.NewId(),
