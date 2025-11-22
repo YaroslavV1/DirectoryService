@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using DirectoryService.Infrastructure;
+using DirectoryService.Infrastructure.Seeding;
 using DirectoryService.Presentation;
 using DirectoryService.Presentation.Extensions;
 using Microsoft.AspNetCore.Http.Json;
@@ -39,6 +40,11 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
     app.UseSwaggerUI(options => options.SwaggerEndpoint("/openapi/v1.json", "DirectoryService"));
+
+    if (args.Contains("--seeding"))
+    {
+        await app.Services.RunSeedingAsync();
+    }
 }
 
 app.UseSerilogRequestLogging();
