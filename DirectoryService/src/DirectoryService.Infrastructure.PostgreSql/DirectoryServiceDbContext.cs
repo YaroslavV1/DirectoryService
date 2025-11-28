@@ -1,4 +1,5 @@
-﻿using DirectoryService.Domain.Departments;
+﻿using DirectoryService.Application.Database;
+using DirectoryService.Domain.Departments;
 using DirectoryService.Domain.Locations;
 using DirectoryService.Domain.Positions;
 using Microsoft.EntityFrameworkCore;
@@ -6,7 +7,7 @@ using Microsoft.Extensions.Logging;
 
 namespace DirectoryService.Infrastructure;
 
-public class DirectoryServiceDbContext : DbContext
+public class DirectoryServiceDbContext : DbContext, IReadDbContext
 {
     private readonly string _connectionString;
 
@@ -15,6 +16,8 @@ public class DirectoryServiceDbContext : DbContext
     public DbSet<Position> Positions { get; set; } = null!;
 
     public DbSet<Location> Locations { get; set; } = null!;
+
+    public IQueryable<Location> LocationsRead => Set<Location>().AsNoTracking();
 
     public DirectoryServiceDbContext(string connectionString)
     {

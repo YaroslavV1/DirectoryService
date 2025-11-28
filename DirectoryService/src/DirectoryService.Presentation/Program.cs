@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using DirectoryService.Application.Database;
 using DirectoryService.Infrastructure;
 using DirectoryService.Infrastructure.Seeding;
 using DirectoryService.Presentation;
@@ -22,6 +23,12 @@ Log.Logger = new LoggerConfiguration()
 builder.Services.AddScoped<DirectoryServiceDbContext>(sp =>
     new DirectoryServiceDbContext(
         builder.Configuration.GetConnectionString("DirectoryServiceDb")!));
+
+builder.Services.AddScoped<IReadDbContext, DirectoryServiceDbContext>(sp =>
+    new DirectoryServiceDbContext(
+        builder.Configuration.GetConnectionString("DirectoryServiceDb")!));
+
+Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
 
 builder.Services.AddProgramDependencies();
 

@@ -1,5 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
 using DirectoryService.Application.Abstractions;
+using DirectoryService.Application.Abstractions.Commands;
 using DirectoryService.Application.Positions.CreatePosition;
 using DirectoryService.Contracts.Positions;
 using DirectoryService.Presentation.EndpointResults;

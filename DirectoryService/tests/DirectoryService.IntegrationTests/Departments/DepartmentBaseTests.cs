@@ -2,6 +2,7 @@
 using DirectoryService.Application.Departments.CreateDepartment;
 using DirectoryService.Contracts.Departments;
 using DirectoryService.Contracts.Locations;
+using DirectoryService.Contracts.Locations.CreateLocation;
 using DirectoryService.Domain.Locations;
 using DirectoryService.Domain.Locations.ValueObjects;
 using DirectoryService.Shared;

@@ -9,8 +9,7 @@
       "applicationUrl": "http://localhost:5279",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      },
-      "commandLineArgs": "--seeding"
+      }
     },
     "https": {
       "commandName": "Project",

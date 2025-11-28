@@ -1,7 +1,12 @@
 ﻿using CSharpFunctionalExtensions;
 using DirectoryService.Application.Abstractions;
+using DirectoryService.Application.Abstractions.Commands;
+using DirectoryService.Application.Abstractions.Queries;
 using DirectoryService.Application.Locations.CreateLocation;
+using DirectoryService.Application.Locations.GetLocations;
 using DirectoryService.Contracts.Locations;
+using DirectoryService.Contracts.Locations.CreateLocation;
+using DirectoryService.Contracts.Locations.GetLocations;
 using DirectoryService.Presentation.EndpointResults;
 using DirectoryService.Shared;
 using Microsoft.AspNetCore.Mvc;
@@ -22,6 +27,18 @@ public class LocationController : ControllerBase
 
         var result = await handle.Handle(command, cancellationToken);
 
+        return result;
+    }
+
+    [HttpGet]
+    public async Task<EndpointResult<GetLocationsDto>> Get(
+        [FromQuery] GetLocationsRequest request,
+        [FromServices] IQueryHandler<Result<GetLocationsDto, Errors>, GetLocationsQuery> handler,
+        CancellationToken cancellationToken = default)
+    {
+        var query = new GetLocationsQuery(request);
+
+        var result = await handler.Handle(query, cancellationToken);
         return result;
     }
 }

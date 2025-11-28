@@ -1,4 +1,5 @@
 ﻿using DirectoryService.Contracts.Locations;
+using DirectoryService.Contracts.Locations.CreateLocation;
 using DirectoryService.Domain.Departments.ValueObjects;
 using DirectoryService.Domain.Locations.ValueObjects;
 using Microsoft.EntityFrameworkCore;
