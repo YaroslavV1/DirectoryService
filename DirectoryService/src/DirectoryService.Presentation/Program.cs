@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 using DirectoryService.Application.Database;
 using DirectoryService.Infrastructure;
+using DirectoryService.Infrastructure.Database;
 using DirectoryService.Infrastructure.Seeding;
 using DirectoryService.Presentation;
 using DirectoryService.Presentation.Extensions;
@@ -27,6 +28,9 @@ builder.Services.AddScoped<DirectoryServiceDbContext>(sp =>
 builder.Services.AddScoped<IReadDbContext, DirectoryServiceDbContext>(sp =>
     new DirectoryServiceDbContext(
         builder.Configuration.GetConnectionString("DirectoryServiceDb")!));
+
+builder.Services.AddSingleton<IDbConnectionFactory, NpgsqlConnectionFactory>(sp => 
+    new NpgsqlConnectionFactory(builder.Configuration.GetConnectionString("DirectoryServiceDb")!));
 
 Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
 

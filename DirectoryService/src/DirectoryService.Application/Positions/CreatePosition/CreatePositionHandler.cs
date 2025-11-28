@@ -1,5 +1,4 @@
 ﻿using CSharpFunctionalExtensions;
-using DirectoryService.Application.Abstractions;
 using DirectoryService.Application.Abstractions.Commands;
 using DirectoryService.Application.Departments;
 using DirectoryService.Application.Validation;

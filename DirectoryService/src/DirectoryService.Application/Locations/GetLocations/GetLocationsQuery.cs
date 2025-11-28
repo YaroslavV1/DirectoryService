@@ -1,5 +1,4 @@
 ﻿using DirectoryService.Application.Abstractions.Queries;
-using DirectoryService.Contracts.Locations;
 using DirectoryService.Contracts.Locations.GetLocations;
 
 namespace DirectoryService.Application.Locations.GetLocations;

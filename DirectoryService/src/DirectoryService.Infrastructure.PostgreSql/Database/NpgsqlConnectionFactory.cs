@@ -1,6 +1,5 @@
 ﻿using System.Data;
 using DirectoryService.Application.Database;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Npgsql;
 
@@ -10,10 +9,9 @@ public class NpgsqlConnectionFactory : IDbConnectionFactory, IDisposable, IAsync
 {
     private readonly NpgsqlDataSource _dataSource;
 
-    public NpgsqlConnectionFactory(IConfiguration configuration)
+    public NpgsqlConnectionFactory(string connectionString)
     {
-        var dataSourceBuilder = new NpgsqlDataSourceBuilder(
-            configuration.GetConnectionString("DirectoryServiceDb"));
+        var dataSourceBuilder = new NpgsqlDataSourceBuilder(connectionString);
 
         dataSourceBuilder.UseLoggerFactory(CreateLoggerFactory());
 
