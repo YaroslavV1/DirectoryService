@@ -14,3 +14,4 @@ public interface IQueryHandler<in TQuery>
 {
     Task<UnitResult<Errors>> Handle(TQuery query, CancellationToken cancellationToken = default);
 }
+

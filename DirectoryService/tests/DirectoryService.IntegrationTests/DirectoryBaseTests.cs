@@ -2,8 +2,14 @@
 using DirectoryService.Application.Departments.CreateDepartment;
 using DirectoryService.Contracts.Departments;
 using DirectoryService.Contracts.Locations.CreateLocation;
+using DirectoryService.Contracts.Positions;
+using DirectoryService.Domain.DepartmentPositions;
+using DirectoryService.Domain.DepartmentPositions.ValueObjects;
+using DirectoryService.Domain.Departments.ValueObjects;
 using DirectoryService.Domain.Locations;
 using DirectoryService.Domain.Locations.ValueObjects;
+using DirectoryService.Domain.Positions;
+using DirectoryService.Domain.Positions.ValueObjects;
 using DirectoryService.Infrastructure;
 using DirectoryService.Shared;
 using Microsoft.Extensions.DependencyInjection;
@@ -80,7 +86,32 @@ public class DirectoryBaseTests : IClassFixture<DirectoryTestWebFactory>, IAsync
             return location.Id;
         });
     }
-    
+
+    protected async Task<PositionId> CreatePosition(CreatePositionRequest positionRequest)
+    {
+        return await ExecuteInDb(async (context) =>
+        {
+            var positionId = PositionId.NewId();
+            var departmentPositions = positionRequest.DepartmentsIds.Select(dp =>
+                DepartmentPosition.Create(
+                    DepartmentPositionId.NewGuid(),
+                    DepartmentId.Create(dp),
+                    positionId).Value);
+
+            var position = Position.Create(
+                positionId,
+                PositionName.Create(positionRequest.Name).Value,
+                positionRequest.Description,
+                departmentPositions).Value;
+
+            context.Positions.Add(position);
+
+            await context.SaveChangesAsync();
+
+            return position.Id;
+        });
+    }
+
     protected async Task<Result<Guid, Errors>> CreateDepartment(
         string name,
         string identifier,
