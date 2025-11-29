@@ -1,5 +1,7 @@
 ﻿using System.Data.Common;
+using DirectoryService.Application.Database;
 using DirectoryService.Infrastructure;
+using DirectoryService.Infrastructure.Database;
 using DirectoryService.Presentation;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -59,9 +61,12 @@ public class DirectoryTestWebFactory : WebApplicationFactory<Program>, IAsyncLif
         builder.ConfigureTestServices(services =>
         {
             services.RemoveAll<DirectoryServiceDbContext>();
+            services.RemoveAll<IDbConnectionFactory>();
 
             services.AddScoped<DirectoryServiceDbContext>(_ =>
                 new DirectoryServiceDbContext(_container.GetConnectionString()));
+            services.AddSingleton<IDbConnectionFactory, NpgsqlConnectionFactory>(sp =>
+                new NpgsqlConnectionFactory(_container.GetConnectionString()));
         });
     }
 
@@ -69,10 +74,6 @@ public class DirectoryTestWebFactory : WebApplicationFactory<Program>, IAsyncLif
     {
         _respawner = await Respawner.CreateAsync(
             _dbConnection,
-            new RespawnerOptions
-            {
-                DbAdapter = DbAdapter.Postgres,
-                SchemasToInclude = ["public"],
-            });
+            new RespawnerOptions { DbAdapter = DbAdapter.Postgres, SchemasToInclude = ["public"], });
     }
 }
