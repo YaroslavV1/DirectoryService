@@ -1,5 +1,5 @@
 ﻿using DirectoryService.Application.Abstractions.Commands;
-using DirectoryService.Contracts.Departments;
+using DirectoryService.Contracts.Departments.MoveDepartment;
 
 namespace DirectoryService.Application.Departments.MoveDepartment;
 

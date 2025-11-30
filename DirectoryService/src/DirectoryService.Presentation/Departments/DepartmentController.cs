@@ -2,10 +2,15 @@
 using DirectoryService.Application.Abstractions.Commands;
 using DirectoryService.Application.Abstractions.Queries;
 using DirectoryService.Application.Departments.CreateDepartment;
+using DirectoryService.Application.Departments.GetRootDepartmentsTree;
 using DirectoryService.Application.Departments.GetTopDepartmentsByPositionCount;
 using DirectoryService.Application.Departments.MoveDepartment;
 using DirectoryService.Application.Departments.UpdateDepartmentLocations;
-using DirectoryService.Contracts.Departments;
+using DirectoryService.Contracts.Departments.CreateDepartment;
+using DirectoryService.Contracts.Departments.GetRootDepartmentsTree;
+using DirectoryService.Contracts.Departments.GetTopDepartments;
+using DirectoryService.Contracts.Departments.MoveDepartment;
+using DirectoryService.Contracts.Departments.UpdateDepartmentLocations;
 using DirectoryService.Presentation.EndpointResults;
 using DirectoryService.Shared;
 using Microsoft.AspNetCore.Mvc;
@@ -64,6 +69,19 @@ public class DepartmentController : ControllerBase
         CancellationToken cancellationToken = default)
     {
         var query = new GetTopDepartmentsQuery(request);
+
+        var result = await handler.Handle(query, cancellationToken);
+
+        return result;
+    }
+
+    [HttpGet("roots")]
+    public async Task<EndpointResult<RootDepartmentTreeResponse>> GetRootDepartmentsTree(
+        [FromQuery] GetRootDepartmentsTreeRequest request,
+        [FromServices] IQueryHandler<Result<RootDepartmentTreeResponse, Errors>, GetRootDepartmentsTreeQuery> handler,
+        CancellationToken cancellationToken = default)
+    {
+        var query = new GetRootDepartmentsTreeQuery(request);
 
         var result = await handler.Handle(query, cancellationToken);
 

@@ -1,8 +1,8 @@
 ﻿using CSharpFunctionalExtensions;
+using DirectoryService.Application.Departments.GetRootDepartmentsTree;
 using DirectoryService.Application.Departments.GetTopDepartmentsByPositionCount;
-using DirectoryService.Application.Locations.GetLocations;
-using DirectoryService.Contracts.Departments;
-using DirectoryService.Contracts.Locations.GetLocations;
+using DirectoryService.Contracts.Departments.GetRootDepartmentsTree;
+using DirectoryService.Contracts.Departments.GetTopDepartments;
 using DirectoryService.Shared;
 
 namespace DirectoryService.IntegrationTests.Departments;
@@ -24,6 +24,19 @@ public class DepartmentBaseTests : DirectoryBaseTests
             return await sut.Handle(query, CancellationToken.None);
         });
 
+        return result;
+    }
+
+    protected async Task<Result<RootDepartmentTreeResponse, Errors>> GetRootDepartmentsTree(
+        GetRootDepartmentsTreeRequest request)
+    {
+        var result = await ExecuteHandler(async (GetRootDepartmentsTreeHandler sut) =>
+        {
+            var query = new GetRootDepartmentsTreeQuery(request);
+
+            return await sut.Handle(query, CancellationToken.None);
+        });
+        
         return result;
     }
 }
