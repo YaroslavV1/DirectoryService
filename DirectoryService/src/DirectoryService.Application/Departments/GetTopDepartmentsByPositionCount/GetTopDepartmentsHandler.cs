@@ -14,14 +14,11 @@ public class GetTopDepartmentsHandler :
         GetTopDepartmentsQuery>
 {
     private readonly IDbConnectionFactory _dbConnection;
-    private readonly ILogger<GetTopDepartmentsHandler> _logger;
 
     public GetTopDepartmentsHandler(
-        IDbConnectionFactory dbConnection,
-        ILogger<GetTopDepartmentsHandler> logger)
+        IDbConnectionFactory dbConnection)
     {
         _dbConnection = dbConnection;
-        _logger = logger;
     }
 
     public async Task<Result<GetTopDepartmentsResponse, Errors>> Handle(
@@ -47,8 +44,6 @@ public class GetTopDepartmentsHandler :
             LIMIT @TopLimit
             """,
             new { TopLimit = topLimit });
-
-        _logger.LogInformation("Top Departments was successfully retrieved.");
 
         return new GetTopDepartmentsResponse(
             topDepartmentsByPositionsCount.ToList(),

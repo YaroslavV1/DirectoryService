@@ -14,14 +14,11 @@ public class GetDepartmentChildrenHandler : IQueryHandler<
     GetDepartmentChildrenQuery>
 {
     private readonly IDbConnectionFactory _dbConnection;
-    private readonly ILogger<GetDepartmentChildrenHandler> _logger;
 
     public GetDepartmentChildrenHandler(
-        IDbConnectionFactory dbConnection,
-        ILogger<GetDepartmentChildrenHandler> logger)
+        IDbConnectionFactory dbConnection)
     {
         _dbConnection = dbConnection;
-        _logger = logger;
     }
 
     public async Task<Result<GetDepartmentChildrenResponse, Errors>> Handle(
@@ -57,13 +54,6 @@ public class GetDepartmentChildrenHandler : IQueryHandler<
             LIMIT @pageSize OFFSET @offset
             """,
             parameters);
-
-        _logger.LogInformation(
-            "Retrieved {Count} children for parent {ParentId} (page {Page}, size {Size})",
-            children.Count(),
-            query.ParentId,
-            page,
-            size);
 
         return new GetDepartmentChildrenResponse(children.ToList());
     }

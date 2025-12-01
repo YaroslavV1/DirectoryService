@@ -15,14 +15,11 @@ public class GetRootDepartmentsTreeHandler :
         GetRootDepartmentsTreeQuery>
 {
     private readonly IDbConnectionFactory _dbConnection;
-    private readonly ILogger<GetRootDepartmentsTreeHandler> _logger;
 
     public GetRootDepartmentsTreeHandler(
-        IDbConnectionFactory dbConnection,
-        ILogger<GetRootDepartmentsTreeHandler> logger)
+        IDbConnectionFactory dbConnection)
     {
         _dbConnection = dbConnection;
-        _logger = logger;
     }
 
     public async Task<Result<RootDepartmentTreeResponse, Errors>> Handle(
@@ -89,16 +86,12 @@ public class GetRootDepartmentsTreeHandler :
             if (row.ParentId.HasValue && departmentsDictionary.TryGetValue(row.ParentId.Value, out var parent))
             {
                 parent.Children.Add(departmentsDictionary[row.Id]);
-                _logger.LogInformation("Add children: {children} to parent:  {parent}", row.Id, parent);
             }
             else
             {
                 departmentsRoot.Add(departmentsDictionary[row.Id]);
-                _logger.LogInformation("Add root department: {department}", row.Id);
             }
         }
-
-        _logger.LogInformation("Get root departments with possible children was successfully retrieved.");
 
         return new RootDepartmentTreeResponse(departmentsRoot);
     }

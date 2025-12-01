@@ -12,14 +12,11 @@ namespace DirectoryService.Application.Locations.GetLocations;
 public class GetLocationsHandler : IQueryHandler<Result<GetLocationsDto, Errors>, GetLocationsQuery>
 {
     private readonly IDbConnectionFactory _dbConnection;
-    private readonly ILogger<GetLocationsHandler> _logger;
 
     public GetLocationsHandler(
-        IDbConnectionFactory dbConnection,
-        ILogger<GetLocationsHandler> logger)
+        IDbConnectionFactory dbConnection)
     {
         _dbConnection = dbConnection;
-        _logger = logger;
     }
 
     public async Task<Result<GetLocationsDto, Errors>> Handle(
@@ -59,8 +56,6 @@ public class GetLocationsHandler : IQueryHandler<Result<GetLocationsDto, Errors>
             },
             splitOn: "total_count",
             param: parameters);
-
-        _logger.LogInformation("Locations have been successfully retrieved.");
 
         return new GetLocationsDto(locations.ToList(), totalCount ?? 0);
     }
