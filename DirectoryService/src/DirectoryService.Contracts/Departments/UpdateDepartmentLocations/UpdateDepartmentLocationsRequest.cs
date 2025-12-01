@@ -1,3 +1,3 @@
-﻿namespace DirectoryService.Contracts.Departments;
+﻿namespace DirectoryService.Contracts.Departments.UpdateDepartmentLocations;
 
 public record UpdateDepartmentLocationsRequest(IEnumerable<Guid> LocationIds);

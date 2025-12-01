@@ -1,5 +1,5 @@
 ﻿using DirectoryService.Application.Departments.MoveDepartment;
-using DirectoryService.Contracts.Departments;
+using DirectoryService.Contracts.Departments.MoveDepartment;
 using DirectoryService.Contracts.Locations.CreateLocation;
 using DirectoryService.Domain.Departments.ValueObjects;
 using Microsoft.EntityFrameworkCore;

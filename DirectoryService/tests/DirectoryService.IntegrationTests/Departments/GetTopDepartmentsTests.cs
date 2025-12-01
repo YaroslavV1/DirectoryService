@@ -1,14 +1,11 @@
-﻿using DirectoryService.Application.Departments.GetTopDepartmentsByPositionCount;
-using DirectoryService.Contracts.Departments;
-using DirectoryService.Contracts.Locations.CreateLocation;
+﻿using DirectoryService.Contracts.Locations.CreateLocation;
 using DirectoryService.Contracts.Positions;
-using DirectoryService.Domain.Locations.ValueObjects;
 
 namespace DirectoryService.IntegrationTests.Departments;
 
-public class GetTopDepartments : DepartmentBaseTests
+public class GetTopDepartmentsTests : DepartmentBaseTests
 {
-    public GetTopDepartments(DirectoryTestWebFactory factory)
+    public GetTopDepartmentsTests(DirectoryTestWebFactory factory)
         : base(factory)
     {
     }

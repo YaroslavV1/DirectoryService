@@ -1,5 +1,5 @@
 ﻿using DirectoryService.Application.Abstractions.Commands;
-using DirectoryService.Contracts.Departments;
+using DirectoryService.Contracts.Departments.UpdateDepartmentLocations;
 
 namespace DirectoryService.Application.Departments.UpdateDepartmentLocations;
 
