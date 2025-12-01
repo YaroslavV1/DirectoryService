@@ -2,11 +2,13 @@
 using DirectoryService.Application.Abstractions.Commands;
 using DirectoryService.Application.Abstractions.Queries;
 using DirectoryService.Application.Departments.CreateDepartment;
+using DirectoryService.Application.Departments.GetDepartmentChildren;
 using DirectoryService.Application.Departments.GetRootDepartmentsTree;
 using DirectoryService.Application.Departments.GetTopDepartmentsByPositionCount;
 using DirectoryService.Application.Departments.MoveDepartment;
 using DirectoryService.Application.Departments.UpdateDepartmentLocations;
 using DirectoryService.Contracts.Departments.CreateDepartment;
+using DirectoryService.Contracts.Departments.GetDepartmentChildren;
 using DirectoryService.Contracts.Departments.GetRootDepartmentsTree;
 using DirectoryService.Contracts.Departments.GetTopDepartments;
 using DirectoryService.Contracts.Departments.MoveDepartment;
@@ -85,6 +87,21 @@ public class DepartmentController : ControllerBase
 
         var result = await handler.Handle(query, cancellationToken);
 
+        return result;
+    }
+
+    [HttpGet("{parentId:guid}/children")]
+    public async Task<EndpointResult<GetDepartmentChildrenResponse>> GetChildren(
+        [FromRoute] Guid parentId,
+        [FromQuery] GetDepartmentChildrenRequest request,
+        [FromServices] IQueryHandler<
+            Result<GetDepartmentChildrenResponse, Errors>,
+            GetDepartmentChildrenQuery> handler,
+        CancellationToken cancellationToken = default)
+    {
+        var query = new GetDepartmentChildrenQuery(parentId, request);
+
+        var result = await handler.Handle(query, cancellationToken);
         return result;
     }
 }
