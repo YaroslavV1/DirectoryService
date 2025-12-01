@@ -5,7 +5,6 @@ using DirectoryService.Application.Abstractions.Queries;
 using DirectoryService.Application.Database;
 using DirectoryService.Contracts.Departments.GetRootDepartmentsTree;
 using DirectoryService.Shared;
-using Microsoft.Extensions.Logging;
 
 namespace DirectoryService.Application.Departments.GetRootDepartmentsTree;
 
