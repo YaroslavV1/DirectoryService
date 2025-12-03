@@ -159,7 +159,7 @@ public class MoveDepartmentHandler : ICommandHandler<Result<Guid, Errors>, MoveD
             oldPath,
             departmentToMove.Path,
             depthDifference,
-            cancellationToken);
+            cancellationToken:cancellationToken);
 
         if (updateDescendantsResult.IsFailure)
         {

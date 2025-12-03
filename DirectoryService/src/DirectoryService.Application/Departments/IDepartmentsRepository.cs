@@ -34,6 +34,7 @@ public interface IDepartmentsRepository
         DepartmentId departmentId,
         DepartmentPath oldPath,
         DepartmentPath newPath,
-        int depthDifference,
+        int? depthDifference = null,
+        bool? onlyActive = null,
         CancellationToken cancellationToken = default);
 }

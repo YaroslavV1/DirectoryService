@@ -54,6 +54,8 @@ public sealed class Department : Shared.Entity<DepartmentId>
 
     public DateTime UpdatedAt { get; private set; }
 
+    public DateTime DeletedAt { get; private set; }
+
     public IReadOnlyList<Department> ChildrenDepartments => _childrenDepartments;
 
     public IReadOnlyList<DepartmentPosition> Positions => _positions;
@@ -139,6 +141,25 @@ public sealed class Department : Shared.Entity<DepartmentId>
         _locations.Clear();
         _locations.AddRange(deparmentLocations);
         UpdatedAt = DateTime.UtcNow;
+
+        return UnitResult.Success<Error>();
+    }
+
+    public UnitResult<Error> SoftDelete()
+    {
+        IsActive = false;
+
+        var newPath = Path.Value.Contains("deleted-")
+            ? DepartmentPath.CreateParent(Identifier.Create(Path.Value).Value)
+            : DepartmentPath.CreateParent(
+                Identifier.Create(
+                        Path.Value.Replace(Identifier.Value, "deleted-" + Identifier.Value))
+                    .Value);
+
+        Path = newPath;
+
+        UpdatedAt = DateTime.UtcNow;
+        DeletedAt = DateTime.UtcNow;
 
         return UnitResult.Success<Error>();
     }

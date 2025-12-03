@@ -1,5 +1,7 @@
 ﻿using CSharpFunctionalExtensions;
+using Dapper;
 using DirectoryService.Application.Positions;
+using DirectoryService.Domain.Departments.ValueObjects;
 using DirectoryService.Domain.Positions;
 using DirectoryService.Shared;
 using DirectoryService.Shared.Positions;
@@ -57,6 +59,53 @@ public class PositionsRepository : IPositionRepository
         {
             _logger.LogError(e, "Unexpected error while updating the database with {position}", position.Id.Value);
             return PositionsErrors.DatabaseError();
+        }
+    }
+
+    public async Task<UnitResult<Errors>> DeactivateUnusedPositionsByDepartmentIdAsync(
+        DepartmentId departmentId,
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var connection = _dbContext.Database.GetDbConnection();
+
+            const string sql = """
+                               WITH related_positions AS (SELECT p."Id"
+                                                          from positions p
+                                                                   JOIN department_positions dp ON p."Id" = dp.position_id
+                                                              AND dp.department_id = @departmentId),
+                               
+                                    position_usage AS (SELECT rp."Id",
+                                                              count(distinct case
+                                                                                 when d.is_active = true AND d.id != @departmentId
+                                                                                     then d.id
+                                                                  end) as active_dept_count
+                                                       FROM related_positions rp
+                                                                JOIN department_positions dp ON rp."Id" = dp.position_id
+                                                                JOIN departments d ON d.id = dp.department_id
+                                                       GROUP BY rp."Id")
+                               
+                               UPDATE positions
+                               SET is_active  = false,
+                                   updated_at = NOW()
+                               WHERE "Id" IN (SELECT "Id"
+                                              FROM position_usage
+                                              WHERE active_dept_count = 0)
+                               
+
+                               """;
+
+            await connection.ExecuteAsync(sql, new { departmentId = departmentId.Value });
+
+            return UnitResult.Success<Errors>();
+        }
+        catch (Exception e)
+        {
+            _logger.LogError("Failed to deactivate unused positions by {departmentId}", departmentId);
+            return Error.Failure(
+                "positions.soft-delete.unused",
+                $"Failed to soft delete unused locations: {e.Message}").ToErrors();
         }
     }
 }

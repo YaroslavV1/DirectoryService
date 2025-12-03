@@ -39,6 +39,8 @@ public class Position : Shared.Entity<PositionId>
     public DateTime CreatedAt { get; }
 
     public DateTime UpdatedAt { get; private set; }
+    
+    public DateTime DeletedAt { get; private set; }
 
     public IReadOnlyList<DepartmentPosition> Departments => _departments;
 
