@@ -1,4 +1,5 @@
-﻿using CSharpFunctionalExtensions;
+﻿using System.Text;
+using CSharpFunctionalExtensions;
 using Dapper;
 using DirectoryService.Application.Departments;
 using DirectoryService.Domain.Departments;
@@ -224,33 +225,53 @@ public class DepartmentsRepository : IDepartmentsRepository
 
     public async Task<UnitResult<Error>> UpdateDescendantsPathAndDepthAsync(
         DepartmentId departmentId,
-        DepartmentPath oldPath, DepartmentPath newPath,
-        int depthDifference, CancellationToken cancellationToken = default)
+        DepartmentPath oldPath,
+        DepartmentPath newPath,
+        int? depthDifference = null,
+        bool? onlyActive = null,
+        CancellationToken cancellationToken = default)
     {
         try
         {
-            const string sql = """
-                               UPDATE departments
-                               SET 
-                               path = @newPath::ltree || subpath(path, nlevel(@oldPath::ltree)),
-                               depth = depth + @depthDifference,
-                               updated_at = NOW()
-                               WHERE 
-                               path <@ @oldPath::ltree 
-                               AND id != @departmentId
-                               AND is_active = true
-                               """;
+            var depthUpdate = depthDifference.HasValue
+                ? ", depth = depth + @depthDifference"
+                : string.Empty;
 
-            var parameters = new object[]
+            string activeFilter = onlyActive == true
+                ? " AND is_active = true"
+                : string.Empty;
+
+            var sql = new StringBuilder().Append("""
+                                                 UPDATE departments
+                                                 SET 
+                                                     updated_at = NOW(),
+                                                     path = @newPath::ltree || subpath(path, nlevel(@oldPath::ltree))
+                                                 """)
+                .Append(depthUpdate)
+                .Append("""
+
+                        WHERE 
+                            path <@ @oldPath::ltree 
+                            AND id != @departmentId
+                        """)
+                .Append(activeFilter)
+                .ToString();
+
+            var parameters = new List<NpgsqlParameter>
             {
-                new NpgsqlParameter("@newPath", newPath.Value), new NpgsqlParameter("@oldPath", oldPath.Value),
-                new NpgsqlParameter("@depthDifference", depthDifference),
-                new NpgsqlParameter("@departmentId", departmentId.Value),
+                new("@newPath", newPath.Value),
+                new("@oldPath", oldPath.Value),
+                new("@departmentId", departmentId.Value),
             };
+
+            if (depthDifference.HasValue)
+            {
+                parameters.Add(new NpgsqlParameter("@depthDifference", depthDifference.Value));
+            }
 
             await _dbContext.Database.ExecuteSqlRawAsync(
                 sql,
-                parameters,
+                parameters.ToArray(),
                 cancellationToken);
 
             return UnitResult.Success<Error>();

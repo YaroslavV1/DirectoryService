@@ -1,4 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
+using DirectoryService.Application.Departments.DeleteDepartment;
 using DirectoryService.Application.Departments.GetDepartmentChildren;
 using DirectoryService.Application.Departments.GetRootDepartmentsTree;
 using DirectoryService.Application.Departments.GetTopDepartmentsByPositionCount;
@@ -49,6 +50,19 @@ public class DepartmentBaseTests : DirectoryBaseTests
         var result = await ExecuteHandler(async (GetDepartmentChildrenHandler sut) =>
         {
             var query = new GetDepartmentChildrenQuery(parentId, request);
+
+            return await sut.Handle(query, CancellationToken.None);
+        });
+
+        return result;
+    }
+    
+    protected async Task<Result<Guid, Errors>> SoftDeleteDepartment(
+        Guid departmentId)
+    {
+        var result = await ExecuteHandler(async (SoftDeleteDepartmentHandler sut) =>
+        {
+            var query = new SoftDeleteDepartmentCommand(departmentId);
 
             return await sut.Handle(query, CancellationToken.None);
         });

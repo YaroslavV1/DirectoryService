@@ -1,5 +1,7 @@
 ﻿using CSharpFunctionalExtensions;
+using Dapper;
 using DirectoryService.Application.Locations;
+using DirectoryService.Domain.Departments.ValueObjects;
 using DirectoryService.Domain.Locations;
 using DirectoryService.Domain.Locations.ValueObjects;
 using DirectoryService.Shared;
@@ -87,6 +89,52 @@ public class LocationsRepository : ILocationsRepository
                 requestedIds.Select(x => x.Value));
 
             return GeneralErrors.Failure().ToErrors();
+        }
+    }
+
+    public async Task<UnitResult<Errors>> DeactivateUnusedLocationsByDepartmentIdAsync(
+        DepartmentId departmentId,
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var connection = _dbContext.Database.GetDbConnection();
+
+            const string sql = """
+                               WITH related_locations AS (SELECT l."Id"
+                                                          from locations l
+                                                                   JOIN department_locations dl ON l."Id" = dl.location_id
+                                                              AND dl.department_id = @departmentId),
+
+                                    location_usage AS (SELECT rl."Id",
+                                                              count(distinct case
+                                                                                 when d.is_active = true AND d.id != @departmentId
+                                                                                     then d.id
+                                                                  end) as active_dept_count
+                                                       FROM related_locations rl
+                                                                JOIN department_locations dl ON rl."Id" = dl.location_id
+                                                                JOIN departments d ON d.id = dl.department_id
+                                                       GROUP BY rl."Id")
+
+                               UPDATE locations
+                               SET is_active  = false,
+                                   updated_at = NOW()
+                               WHERE "Id" IN (SELECT "Id"
+                                              FROM location_usage
+                                              WHERE active_dept_count = 0)
+
+                               """;
+
+            await connection.ExecuteAsync(sql, new { departmentId = departmentId.Value });
+
+            return UnitResult.Success<Errors>();
+        }
+        catch (Exception e)
+        {
+            _logger.LogError("Failed to deactivate unused location by {departmentId}", departmentId);
+            return Error.Failure(
+                "location.soft-delete.unused",
+                $"Failed to soft delete unused locations: {e.Message}").ToErrors();
         }
     }
 }
