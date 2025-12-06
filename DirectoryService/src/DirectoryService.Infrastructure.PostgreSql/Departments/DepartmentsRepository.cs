@@ -283,4 +283,56 @@ public class DepartmentsRepository : IDepartmentsRepository
                 $"Failed to update descendants: {ex.Message}");
         }
     }
+
+    public async Task<Result<IEnumerable<Department>, Errors>> GetInactiveByDate(
+        DateTime date,
+        CancellationToken cancellationToken = default)
+    {
+        var inactiveDepartments = await _dbContext.Departments
+            .Include(d => d.ChildrenDepartments)
+            .Include(d => d.Locations)
+            .Include(d => d.Positions)
+            .Where(d => !d.IsActive && d.DeletedAt < date)
+            .ToListAsync(cancellationToken: cancellationToken);
+
+        return inactiveDepartments;
+    }
+
+    public async Task<Result<IEnumerable<Department>, Errors>> GetListByIds(
+        IEnumerable<DepartmentId?> departmentIds,
+        CancellationToken cancellationToken = default)
+    {
+        var departments = await _dbContext.Departments
+            .Include(d => d.Positions)
+            .Include(d => d.Locations)
+            .Where(d => departmentIds.Contains(d.Id))
+            .ToListAsync(cancellationToken);
+
+        return departments;
+    }
+
+    public async Task<UnitResult<Errors>> DeleteInactiveByDate(
+        DateTime date,
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            await _dbContext.Database.ExecuteSqlRawAsync(
+                """
+                DELETE FROM departments d
+                WHERE d.is_active = false
+                AND d.deleted_at < @date
+
+                """,
+                [new { date }],
+                cancellationToken: cancellationToken);
+
+            return UnitResult.Success<Errors>();
+        }
+        catch (Exception e)
+        {
+            _logger.LogError("Failed to delete inactive department with error: {e}", e.Message);
+            return UnitResult.Failure<Errors>(GeneralErrors.Failure());
+        }
+    }
 }
