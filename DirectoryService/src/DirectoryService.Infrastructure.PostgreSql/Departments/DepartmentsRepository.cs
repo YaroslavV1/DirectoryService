@@ -299,13 +299,26 @@ public class DepartmentsRepository : IDepartmentsRepository
     }
 
     public async Task<Result<IEnumerable<Department>, Errors>> GetListByIds(
-        IEnumerable<DepartmentId?> departmentIds,
+        IEnumerable<Guid?> departmentIds,
         CancellationToken cancellationToken = default)
     {
+        var ids = departmentIds
+            .Where(id => id.HasValue)
+            .Select(id => id.Value)
+            .ToHashSet();
+
+        if (ids.Count == 0)
+            return new List<Department>();
+
         var departments = await _dbContext.Departments
+            .FromSqlRaw(
+                """
+                            SELECT * FROM departments 
+                            WHERE id = ANY(@ids)
+                """,
+                new Npgsql.NpgsqlParameter("@ids", ids.ToArray()))
             .Include(d => d.Positions)
             .Include(d => d.Locations)
-            .Where(d => departmentIds.Contains(d.Id))
             .ToListAsync(cancellationToken);
 
         return departments;
@@ -317,14 +330,13 @@ public class DepartmentsRepository : IDepartmentsRepository
     {
         try
         {
-            await _dbContext.Database.ExecuteSqlRawAsync(
-                """
-                DELETE FROM departments d
-                WHERE d.is_active = false
-                AND d.deleted_at < @date
+            await _dbContext.Database.ExecuteSqlAsync(
+                $"""
+                 DELETE FROM departments d
+                 WHERE d.is_active = false
+                 AND d.deleted_at <= {date.ToUniversalTime()}
 
-                """,
-                [new { date }],
+                 """,
                 cancellationToken: cancellationToken);
 
             return UnitResult.Success<Errors>();

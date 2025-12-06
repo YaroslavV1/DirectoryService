@@ -43,7 +43,7 @@ public interface IDepartmentsRepository
         CancellationToken cancellationToken = default);
 
     Task<Result<IEnumerable<Department>, Errors>> GetListByIds(
-        IEnumerable<DepartmentId?> departmentIds,
+        IEnumerable<Guid?> departmentIds,
         CancellationToken cancellationToken = default);
 
     Task<UnitResult<Errors>> DeleteInactiveByDate(

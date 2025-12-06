@@ -55,7 +55,7 @@ public class DeleteInactiveDepartmentHandler
 
         var inactiveDepartments = inactiveDepartmentsResult.Value;
 
-        var departmentIds = inactiveDepartments.Select(d => d.ParentId);
+        var departmentIds = inactiveDepartments.Select(d => d.ParentId?.Value);
 
         var parentOfInactiveDepartmentsResult =
             await _departmentsRepository.GetListByIds(departmentIds, cancellationToken);

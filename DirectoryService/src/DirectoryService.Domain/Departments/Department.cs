@@ -149,14 +149,21 @@ public sealed class Department : Shared.Entity<DepartmentId>
     {
         IsActive = false;
 
-        var newPath = Path.Value.Contains("deleted-")
-            ? DepartmentPath.CreateParent(Identifier.Create(Path.Value).Value)
-            : DepartmentPath.CreateParent(
-                Identifier.Create(
-                        Path.Value.Replace(Identifier.Value, "deleted-" + Identifier.Value))
-                    .Value);
+        if (!Path.Value.Contains("deleted-"))
+        {
+            string[] pathParts = Path.Value.Split('.');
 
-        Path = newPath;
+            pathParts[^1] = "deleted-" + pathParts[^1];
+
+            var newPath = DepartmentPath.CreateParent(Identifier.Create(pathParts[0]).Value);
+
+            for (int i = 1; i < pathParts.Length; i++)
+            {
+                newPath = newPath.CreateChild(Identifier.Create(pathParts[i]).Value);
+            }
+
+            Path = newPath;
+        }
 
         UpdatedAt = DateTime.UtcNow;
         DeletedAt = DateTime.UtcNow;
