@@ -12,4 +12,6 @@ public interface IPositionRepository
     public Task<UnitResult<Errors>> DeactivateUnusedPositionsByDepartmentIdAsync(
         DepartmentId departmentId,
         CancellationToken cancellationToken = default);
+
+    Task<UnitResult<Errors>> DeleteInactiveAsync(CancellationToken cancellationToken = default);
 }

@@ -37,4 +37,16 @@ public interface IDepartmentsRepository
         int? depthDifference = null,
         bool? onlyActive = null,
         CancellationToken cancellationToken = default);
+
+    Task<Result<IEnumerable<Department>, Errors>> GetInactiveByDate(
+        DateTime date,
+        CancellationToken cancellationToken = default);
+
+    Task<Result<IEnumerable<Department>, Errors>> GetListByIds(
+        IEnumerable<Guid?> departmentIds,
+        CancellationToken cancellationToken = default);
+
+    Task<UnitResult<Errors>> DeleteInactiveByDate(
+        DateTime date,
+        CancellationToken cancellationToken = default);
 }

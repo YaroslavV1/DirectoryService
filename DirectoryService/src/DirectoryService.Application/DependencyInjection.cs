@@ -1,5 +1,6 @@
 ﻿using DirectoryService.Application.Abstractions.Commands;
 using DirectoryService.Application.Abstractions.Queries;
+using DirectoryService.Application.Departments.DeleteInactiveDepartment;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -24,6 +25,8 @@ public static class DependencyInjection
                 .AssignableToAny(typeof(IQueryHandler<,>), typeof(IQueryHandler<>)))
             .AsSelfWithInterfaces()
             .WithScopedLifetime());
+
+        services.AddScoped<DeleteInactiveDepartmentHandler>();
 
         return services;
     }

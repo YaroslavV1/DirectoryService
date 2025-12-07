@@ -137,4 +137,29 @@ public class LocationsRepository : ILocationsRepository
                 $"Failed to soft delete unused locations: {e.Message}").ToErrors();
         }
     }
+
+    public async Task<UnitResult<Errors>> DeleteInactiveAsync(CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            await _dbContext.Database.ExecuteSqlRawAsync(
+                """
+                DELETE FROM locations l
+                WHERE l.is_active = false
+                AND not exists(
+                    SELECT 1
+                    from department_locations dl
+                    WHERE dl.location_id = l."Id"
+                )
+                """,
+                cancellationToken);
+
+            return UnitResult.Success<Errors>();
+        }
+        catch (Exception e)
+        {
+            _logger.LogError("Failed to delete inactive location with error: {e}", e.Message);
+            return UnitResult.Failure<Errors>(GeneralErrors.Failure());
+        }
+    }
 }

@@ -2,6 +2,7 @@
 using DirectoryService.Application.Departments;
 using DirectoryService.Application.Locations;
 using DirectoryService.Application.Positions;
+using DirectoryService.Infrastructure.BackgroundServices;
 using DirectoryService.Infrastructure.Database;
 using DirectoryService.Infrastructure.Departments;
 using DirectoryService.Infrastructure.Locations;
@@ -20,6 +21,8 @@ public static class DependencyInjection
         services.AddScoped<IPositionRepository, PositionsRepository>();
         services.AddScoped<ITransactionManager, TransactionManager>();
         services.AddScoped<ISeeder, DirectoryServiceSeeding>();
+
+        services.AddHostedService<DepartmentCleanupBackgroundService>();
         return services;
     }
 }
