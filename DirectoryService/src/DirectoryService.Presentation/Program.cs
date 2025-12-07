@@ -21,15 +21,15 @@ Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Override("Microsoft.AspNetCore.Routing", LogEventLevel.Warning)
     .CreateLogger();
 
-builder.Services.AddScoped<DirectoryServiceDbContext>(sp =>
+builder.Services.AddScoped<DirectoryServiceDbContext>(_ =>
     new DirectoryServiceDbContext(
         builder.Configuration.GetConnectionString("DirectoryServiceDb")!));
 
-builder.Services.AddScoped<IReadDbContext, DirectoryServiceDbContext>(sp =>
+builder.Services.AddScoped<IReadDbContext, DirectoryServiceDbContext>(_ =>
     new DirectoryServiceDbContext(
         builder.Configuration.GetConnectionString("DirectoryServiceDb")!));
 
-builder.Services.AddSingleton<IDbConnectionFactory, NpgsqlConnectionFactory>(sp => 
+builder.Services.AddSingleton<IDbConnectionFactory, NpgsqlConnectionFactory>(_ =>
     new NpgsqlConnectionFactory(builder.Configuration.GetConnectionString("DirectoryServiceDb")!));
 
 Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
@@ -49,14 +49,16 @@ app.UseExceptionHandlerMiddleware();
 
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
-    app.UseSwaggerUI(options => options.SwaggerEndpoint("/openapi/v1.json", "DirectoryService"));
-
     if (args.Contains("--seeding"))
     {
         await app.Services.RunSeedingAsync();
     }
 }
+
+app.MapOpenApi();
+app.UseSwaggerUI(options => options.SwaggerEndpoint("/openapi/v1.json", "DirectoryService"));
+
+await app.ApplyMigrations();
 
 app.UseSerilogRequestLogging();
 
