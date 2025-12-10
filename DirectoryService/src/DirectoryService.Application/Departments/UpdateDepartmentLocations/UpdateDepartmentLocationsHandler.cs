@@ -1,5 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
 using DirectoryService.Application.Abstractions.Commands;
+using DirectoryService.Application.Caching;
 using DirectoryService.Application.Database;
 using DirectoryService.Application.Locations;
 using DirectoryService.Application.Validation;
@@ -17,19 +18,24 @@ public class UpdateDepartmentLocationsHandler : ICommandHandler<Result<Guid, Err
 {
     private readonly IDepartmentsRepository _departmentsRepository;
     private readonly ILocationsRepository _locationsRepository;
+    private readonly ICacheService _cacheService;
     private readonly ITransactionManager _transactionManager;
     private readonly IValidator<UpdateDepartmentLocationsCommand> _validator;
     private readonly ILogger<UpdateDepartmentLocationsHandler> _logger;
 
+    private const string KEY = "departments_";
+
     public UpdateDepartmentLocationsHandler(
         IDepartmentsRepository departmentsRepository,
         ILocationsRepository locationsRepository,
+        ICacheService cacheService,
         ITransactionManager transactionManager,
         IValidator<UpdateDepartmentLocationsCommand> validator,
         ILogger<UpdateDepartmentLocationsHandler> logger)
     {
         _departmentsRepository = departmentsRepository;
         _locationsRepository = locationsRepository;
+        _cacheService = cacheService;
         _transactionManager = transactionManager;
         _validator = validator;
         _logger = logger;
@@ -127,6 +133,8 @@ public class UpdateDepartmentLocationsHandler : ICommandHandler<Result<Guid, Err
             _logger.LogError("Failed commit");
             return commitResult.Error.ToErrors();
         }
+
+        await _cacheService.RemoveByPrefixAsync(KEY, cancellationToken);
 
         return department.Id.Value;
     }

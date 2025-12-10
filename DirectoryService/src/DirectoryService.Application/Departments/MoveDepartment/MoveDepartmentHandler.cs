@@ -1,5 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
 using DirectoryService.Application.Abstractions.Commands;
+using DirectoryService.Application.Caching;
 using DirectoryService.Application.Database;
 using DirectoryService.Application.Validation;
 using DirectoryService.Domain.Departments;
@@ -15,17 +16,22 @@ public class MoveDepartmentHandler : ICommandHandler<Result<Guid, Errors>, MoveD
 {
     private readonly IDepartmentsRepository _departmentsRepository;
     private readonly ITransactionManager _transactionManager;
+    private readonly ICacheService _cacheService;
     private readonly IValidator<MoveDepartmentCommand> _validator;
     private readonly ILogger<MoveDepartmentHandler> _logger;
+    
+    private const string KEY = "departments_";
 
     public MoveDepartmentHandler(
         IDepartmentsRepository departmentsRepository,
         ITransactionManager transactionManager,
+        ICacheService cacheService,
         IValidator<MoveDepartmentCommand> validator,
         ILogger<MoveDepartmentHandler> logger)
     {
         _departmentsRepository = departmentsRepository;
         _transactionManager = transactionManager;
+        _cacheService = cacheService;
         _validator = validator;
         _logger = logger;
     }
@@ -159,7 +165,7 @@ public class MoveDepartmentHandler : ICommandHandler<Result<Guid, Errors>, MoveD
             oldPath,
             departmentToMove.Path,
             depthDifference,
-            cancellationToken:cancellationToken);
+            cancellationToken: cancellationToken);
 
         if (updateDescendantsResult.IsFailure)
         {
@@ -176,6 +182,8 @@ public class MoveDepartmentHandler : ICommandHandler<Result<Guid, Errors>, MoveD
             _logger.LogError("Failed to commit changes");
             return commitResult.Error.ToErrors();
         }
+
+        await _cacheService.RemoveByPrefixAsync(KEY, cancellationToken);
 
         _logger.LogInformation(
             "Successfully moved department {departmentId} to parent {parentId}",

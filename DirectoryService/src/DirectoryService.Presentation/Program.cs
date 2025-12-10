@@ -34,7 +34,7 @@ builder.Services.AddSingleton<IDbConnectionFactory, NpgsqlConnectionFactory>(_ =
 
 Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
 
-builder.Services.AddProgramDependencies();
+builder.Services.AddProgramDependencies(builder.Configuration);
 
 builder.Services.AddSerilog();
 

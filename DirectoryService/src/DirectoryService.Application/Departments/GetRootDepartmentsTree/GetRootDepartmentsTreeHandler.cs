@@ -1,10 +1,13 @@
 ﻿using System.Data;
+using System.Text.Json;
 using CSharpFunctionalExtensions;
 using Dapper;
 using DirectoryService.Application.Abstractions.Queries;
+using DirectoryService.Application.Caching;
 using DirectoryService.Application.Database;
 using DirectoryService.Contracts.Departments.GetRootDepartmentsTree;
 using DirectoryService.Shared;
+using Microsoft.Extensions.Caching.Distributed;
 
 namespace DirectoryService.Application.Departments.GetRootDepartmentsTree;
 
@@ -13,17 +16,46 @@ public class GetRootDepartmentsTreeHandler :
         Result<RootDepartmentTreeResponse, Errors>,
         GetRootDepartmentsTreeQuery>
 {
+    private const short TIME_TO_LIVE_MINUTES = 5;
     private readonly IDbConnectionFactory _dbConnection;
+    private readonly ICacheService _cacheService;
 
     public GetRootDepartmentsTreeHandler(
-        IDbConnectionFactory dbConnection)
+        IDbConnectionFactory dbConnection,
+        ICacheService cacheService)
     {
         _dbConnection = dbConnection;
+        _cacheService = cacheService;
     }
 
     public async Task<Result<RootDepartmentTreeResponse, Errors>> Handle(
         GetRootDepartmentsTreeQuery query,
         CancellationToken cancellationToken = default)
+    {
+        string key = "departments_" + JsonSerializer.Serialize(query);
+
+        var options =
+            new DistributedCacheEntryOptions() { SlidingExpiration = TimeSpan.FromMinutes(TIME_TO_LIVE_MINUTES) };
+
+        var rootDepartments = await _cacheService.GetOrSetAsync(
+            key,
+            options,
+            async () => await GetRootDepartmentTreeAsync(query, cancellationToken),
+            cancellationToken);
+
+        if (rootDepartments is null)
+        {
+            return Error.NotFound(
+                "departments.not_found.root_tree",
+                "Root departments tree was not found").ToErrors();
+        }
+
+        return rootDepartments;
+    }
+
+    private async Task<RootDepartmentTreeResponse> GetRootDepartmentTreeAsync(
+        GetRootDepartmentsTreeQuery query,
+        CancellationToken cancellationToken)
     {
         var connection = await _dbConnection.CreateConnectionAsync(cancellationToken);
 

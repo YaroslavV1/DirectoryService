@@ -1,9 +1,12 @@
-﻿using CSharpFunctionalExtensions;
+﻿using System.Text.Json;
+using CSharpFunctionalExtensions;
 using Dapper;
 using DirectoryService.Application.Abstractions.Queries;
+using DirectoryService.Application.Caching;
 using DirectoryService.Application.Database;
 using DirectoryService.Contracts.Departments.GetTopDepartments;
 using DirectoryService.Shared;
+using Microsoft.Extensions.Caching.Distributed;
 
 namespace DirectoryService.Application.Departments.GetTopDepartmentsByPositionCount;
 
@@ -12,17 +15,46 @@ public class GetTopDepartmentsHandler :
         Result<GetTopDepartmentsResponse, Errors>,
         GetTopDepartmentsQuery>
 {
+    private const short TIME_TO_LIVE_MINUTES = 5;
     private readonly IDbConnectionFactory _dbConnection;
+    private readonly ICacheService _cacheService;
 
     public GetTopDepartmentsHandler(
-        IDbConnectionFactory dbConnection)
+        IDbConnectionFactory dbConnection,
+        ICacheService cacheService)
     {
         _dbConnection = dbConnection;
+        _cacheService = cacheService;
     }
 
     public async Task<Result<GetTopDepartmentsResponse, Errors>> Handle(
         GetTopDepartmentsQuery query,
         CancellationToken cancellationToken = default)
+    {
+        string key = "departments_" + JsonSerializer.Serialize(query);
+
+        var options =
+            new DistributedCacheEntryOptions() { SlidingExpiration = TimeSpan.FromMinutes(TIME_TO_LIVE_MINUTES) };
+
+        var topDepartmentsByPositionsCount = await _cacheService.GetOrSetAsync(
+            key,
+            options,
+            async () => await GetTopDepartmentsAsync(query, cancellationToken),
+            cancellationToken);
+
+        if (topDepartmentsByPositionsCount is null)
+        {
+            return Error.NotFound(
+                "departments.not_found.top_list",
+                "Top departments was not found").ToErrors();
+        }
+
+        return topDepartmentsByPositionsCount;
+    }
+
+    private async Task<GetTopDepartmentsResponse> GetTopDepartmentsAsync(
+        GetTopDepartmentsQuery query,
+        CancellationToken cancellationToken)
     {
         var connection = await _dbConnection.CreateConnectionAsync(cancellationToken);
 
