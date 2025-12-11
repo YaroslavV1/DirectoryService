@@ -1,5 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
 using DirectoryService.Application.Abstractions.Commands;
+using DirectoryService.Application.Caching;
 using DirectoryService.Application.Locations;
 using DirectoryService.Application.Validation;
 using DirectoryService.Domain.DepartmentLocations;
@@ -17,17 +18,22 @@ public class CreateDepartmentHandler : ICommandHandler<Result<Guid, Errors>, Cre
 {
     private readonly IDepartmentsRepository _departmentsRepository;
     private readonly ILocationsRepository _locationsRepository;
+    private readonly ICacheService _cacheService;
     private readonly IValidator<CreateDepartmentCommand> _validator;
     private readonly ILogger<CreateDepartmentHandler> _logger;
+    
+    private const string KEY = "departments_";
 
     public CreateDepartmentHandler(
         IDepartmentsRepository departmentsRepository,
         ILocationsRepository locationsRepository,
+        ICacheService cacheService,
         IValidator<CreateDepartmentCommand> validator,
         ILogger<CreateDepartmentHandler> logger)
     {
         _departmentsRepository = departmentsRepository;
         _locationsRepository = locationsRepository;
+        _cacheService = cacheService;
         _validator = validator;
         _logger = logger;
     }
@@ -96,6 +102,8 @@ public class CreateDepartmentHandler : ICommandHandler<Result<Guid, Errors>, Cre
             _logger.LogError("Failed to persist department (Name: {Name})", command.Request.Name);
             return createResult.Error.ToErrors();
         }
+
+        await _cacheService.RemoveByPrefixAsync(KEY, cancellationToken);
 
         _logger.LogInformation("Department '{Name}' successfully created with Id {Id}", command.Request.Name,
             createResult.Value);

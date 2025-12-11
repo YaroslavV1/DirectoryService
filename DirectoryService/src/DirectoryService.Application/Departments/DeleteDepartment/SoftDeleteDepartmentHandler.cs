@@ -1,6 +1,7 @@
 ﻿using CSharpFunctionalExtensions;
 using DirectoryService.Application.Abstractions.Commands;
 using DirectoryService.Application.Abstractions.Queries;
+using DirectoryService.Application.Caching;
 using DirectoryService.Application.Database;
 using DirectoryService.Application.Locations;
 using DirectoryService.Application.Positions;
@@ -20,11 +21,15 @@ public class SoftDeleteDepartmentHandler : ICommandHandler<Result<Guid, Errors>,
     private readonly IValidator<SoftDeleteDepartmentCommand> _validator;
     private readonly ITransactionManager _transactionManager;
     private readonly ILogger<SoftDeleteDepartmentHandler> _logger;
+    private readonly ICacheService _cacheService;
+
+    private const string KEY = "departments_";
 
     public SoftDeleteDepartmentHandler(
         IDepartmentsRepository departmentsRepository,
         ILocationsRepository locationsRepository,
         IPositionRepository positionsRepository,
+        ICacheService cacheService,
         IValidator<SoftDeleteDepartmentCommand> validator,
         ITransactionManager transactionManager,
         ILogger<SoftDeleteDepartmentHandler> logger)
@@ -35,6 +40,7 @@ public class SoftDeleteDepartmentHandler : ICommandHandler<Result<Guid, Errors>,
         _validator = validator;
         _transactionManager = transactionManager;
         _logger = logger;
+        _cacheService = cacheService;
     }
 
     public async Task<Result<Guid, Errors>> Handle(
@@ -148,6 +154,8 @@ public class SoftDeleteDepartmentHandler : ICommandHandler<Result<Guid, Errors>,
             _logger.LogError("Failed to commit changes");
             return commitResult.Error.ToErrors();
         }
+
+        await _cacheService.RemoveByPrefixAsync(KEY, cancellationToken);
 
         _logger.LogInformation(
             "Successfully soft delete department {departmentId}",

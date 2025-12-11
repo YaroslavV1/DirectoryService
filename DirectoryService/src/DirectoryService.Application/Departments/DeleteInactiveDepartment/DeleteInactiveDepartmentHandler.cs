@@ -1,4 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
+using DirectoryService.Application.Caching;
 using DirectoryService.Application.Database;
 using DirectoryService.Application.Locations;
 using DirectoryService.Application.Positions;
@@ -14,11 +15,15 @@ public class DeleteInactiveDepartmentHandler
     private readonly IPositionRepository _positionsRepository;
     private readonly ITransactionManager _transactionManager;
     private readonly ILogger<DeleteInactiveDepartmentHandler> _logger;
+    private readonly ICacheService _cacheService;
+
+    private const string KEY = "departments_";
 
     public DeleteInactiveDepartmentHandler(
         IDepartmentsRepository departmentsRepository,
         ILocationsRepository locationsRepository,
         IPositionRepository positionsRepository,
+        ICacheService cacheService,
         ITransactionManager transactionManager,
         ILogger<DeleteInactiveDepartmentHandler> logger)
     {
@@ -27,6 +32,7 @@ public class DeleteInactiveDepartmentHandler
         _positionsRepository = positionsRepository;
         _transactionManager = transactionManager;
         _logger = logger;
+        _cacheService = cacheService;
     }
 
     public async Task<UnitResult<Errors>> Handler(CancellationToken cancellationToken = default)
@@ -154,6 +160,8 @@ public class DeleteInactiveDepartmentHandler
             _logger.LogError("Failed to commit transaction!");
             return commitResult.Error.ToErrors();
         }
+
+        await _cacheService.RemoveByPrefixAsync(KEY, cancellationToken);
 
         _logger.LogInformation("Remove inactive departments with inactive relationships was successful!");
         return UnitResult.Success<Errors>();

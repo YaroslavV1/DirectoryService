@@ -1,10 +1,13 @@
 ﻿using System.Data;
+using System.Text.Json;
 using CSharpFunctionalExtensions;
 using Dapper;
 using DirectoryService.Application.Abstractions.Queries;
+using DirectoryService.Application.Caching;
 using DirectoryService.Application.Database;
 using DirectoryService.Contracts.Departments.GetDepartmentChildren;
 using DirectoryService.Shared;
+using Microsoft.Extensions.Caching.Distributed;
 
 namespace DirectoryService.Application.Departments.GetDepartmentChildren;
 
@@ -13,16 +16,44 @@ public class GetDepartmentChildrenHandler : IQueryHandler<
     GetDepartmentChildrenQuery>
 {
     private readonly IDbConnectionFactory _dbConnection;
+    private readonly ICacheService _cache;
+    private const short TIME_TO_LIVE_MINUTES = 5;
 
     public GetDepartmentChildrenHandler(
-        IDbConnectionFactory dbConnection)
+        IDbConnectionFactory dbConnection, ICacheService cache)
     {
         _dbConnection = dbConnection;
+        _cache = cache;
     }
 
     public async Task<Result<GetDepartmentChildrenResponse, Errors>> Handle(
         GetDepartmentChildrenQuery query,
         CancellationToken cancellationToken = default)
+    {
+        string key = "departments_" + JsonSerializer.Serialize(query);
+
+        var options =
+            new DistributedCacheEntryOptions() { SlidingExpiration = TimeSpan.FromMinutes(TIME_TO_LIVE_MINUTES) };
+
+        var departmentChildren = await _cache.GetOrSetAsync(
+            key,
+            options,
+            async () => await GetDepartmentChildrenAsync(query, cancellationToken),
+            cancellationToken: cancellationToken);
+
+        if (departmentChildren is null)
+        {
+            return Error.NotFound(
+                "departments.not_found.children",
+                "Departments children was not found").ToErrors();
+        }
+
+        return departmentChildren;
+    }
+
+    private async Task<GetDepartmentChildrenResponse> GetDepartmentChildrenAsync(
+        GetDepartmentChildrenQuery query,
+        CancellationToken cancellationToken)
     {
         var connection = await _dbConnection.CreateConnectionAsync(cancellationToken);
 
