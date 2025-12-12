@@ -1,7 +1,7 @@
 ﻿using System.Data;
-using DirectoryService.Application.Database;
 using Microsoft.Extensions.Logging;
 using Npgsql;
+using SharedService.Core.Database;
 
 namespace DirectoryService.Infrastructure.Database;
 

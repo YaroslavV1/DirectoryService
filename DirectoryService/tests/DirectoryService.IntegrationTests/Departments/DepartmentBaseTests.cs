@@ -7,7 +7,7 @@ using DirectoryService.Application.Departments.GetTopDepartmentsByPositionCount;
 using DirectoryService.Contracts.Departments.GetDepartmentChildren;
 using DirectoryService.Contracts.Departments.GetRootDepartmentsTree;
 using DirectoryService.Contracts.Departments.GetTopDepartments;
-using DirectoryService.Shared;
+using SharedService;
 
 namespace DirectoryService.IntegrationTests.Departments;
 

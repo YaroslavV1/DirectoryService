@@ -1,6 +1,4 @@
 ﻿using CSharpFunctionalExtensions;
-using DirectoryService.Application.Abstractions.Commands;
-using DirectoryService.Application.Abstractions.Queries;
 using DirectoryService.Application.Departments.CreateDepartment;
 using DirectoryService.Application.Departments.DeleteDepartment;
 using DirectoryService.Application.Departments.GetDepartmentChildren;
@@ -14,9 +12,11 @@ using DirectoryService.Contracts.Departments.GetRootDepartmentsTree;
 using DirectoryService.Contracts.Departments.GetTopDepartments;
 using DirectoryService.Contracts.Departments.MoveDepartment;
 using DirectoryService.Contracts.Departments.UpdateDepartmentLocations;
-using DirectoryService.Presentation.EndpointResults;
-using DirectoryService.Shared;
 using Microsoft.AspNetCore.Mvc;
+using SharedService;
+using SharedService.Core.Abstractions.Commands;
+using SharedService.Core.Abstractions.Queries;
+using SharedService.Framework.EndpointResults;
 
 namespace DirectoryService.Presentation.Departments;
 

@@ -1,10 +1,10 @@
 ﻿using CSharpFunctionalExtensions;
-using DirectoryService.Application.Caching;
-using DirectoryService.Application.Database;
 using DirectoryService.Application.Locations;
 using DirectoryService.Application.Positions;
-using DirectoryService.Shared;
 using Microsoft.Extensions.Logging;
+using SharedService;
+using SharedService.Core.Caching;
+using SharedService.Core.Database;
 
 namespace DirectoryService.Application.Departments.DeleteInactiveDepartment;
 

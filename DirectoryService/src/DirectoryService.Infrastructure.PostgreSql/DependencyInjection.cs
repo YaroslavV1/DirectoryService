@@ -1,5 +1,4 @@
-﻿using DirectoryService.Application.Database;
-using DirectoryService.Application.Departments;
+﻿using DirectoryService.Application.Departments;
 using DirectoryService.Application.Locations;
 using DirectoryService.Application.Positions;
 using DirectoryService.Infrastructure.BackgroundServices;
@@ -9,6 +8,7 @@ using DirectoryService.Infrastructure.Locations;
 using DirectoryService.Infrastructure.Positions;
 using DirectoryService.Infrastructure.Seeding;
 using Microsoft.Extensions.DependencyInjection;
+using SharedService.Core.Database;
 
 namespace DirectoryService.Infrastructure;
 

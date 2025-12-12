@@ -1,6 +1,6 @@
 ﻿using DirectoryService.Domain.DepartmentLocations;
 using DirectoryService.Domain.Locations.ValueObjects;
-using DirectoryService.Domain.Shared;
+using SharedService;
 
 namespace DirectoryService.Domain.Locations;
 

@@ -1,16 +1,16 @@
 ﻿using CSharpFunctionalExtensions;
-using DirectoryService.Application.Abstractions.Commands;
-using DirectoryService.Application.Caching;
 using DirectoryService.Application.Locations;
-using DirectoryService.Application.Validation;
 using DirectoryService.Domain.DepartmentLocations;
 using DirectoryService.Domain.DepartmentLocations.ValueObjects;
 using DirectoryService.Domain.Departments;
 using DirectoryService.Domain.Departments.ValueObjects;
 using DirectoryService.Domain.Locations.ValueObjects;
-using DirectoryService.Shared;
 using FluentValidation;
 using Microsoft.Extensions.Logging;
+using SharedService;
+using SharedService.Core.Abstractions.Commands;
+using SharedService.Core.Caching;
+using SharedService.Core.Validation;
 
 namespace DirectoryService.Application.Departments.CreateDepartment;
 
@@ -21,7 +21,7 @@ public class CreateDepartmentHandler : ICommandHandler<Result<Guid, Errors>, Cre
     private readonly ICacheService _cacheService;
     private readonly IValidator<CreateDepartmentCommand> _validator;
     private readonly ILogger<CreateDepartmentHandler> _logger;
-    
+
     private const string KEY = "departments_";
 
     public CreateDepartmentHandler(

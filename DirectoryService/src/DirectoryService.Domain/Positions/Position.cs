@@ -1,12 +1,13 @@
-﻿using CSharpFunctionalExtensions;
+﻿
+using CSharpFunctionalExtensions;
 using DirectoryService.Domain.DepartmentPositions;
 using DirectoryService.Domain.Positions.ValueObjects;
 using DirectoryService.Domain.Shared;
-using DirectoryService.Shared;
+using SharedService;
 
 namespace DirectoryService.Domain.Positions;
 
-public class Position : Shared.Entity<PositionId>
+public class Position : SharedService.Entity<PositionId>
 {
     private readonly List<DepartmentPosition> _departments = [];
 

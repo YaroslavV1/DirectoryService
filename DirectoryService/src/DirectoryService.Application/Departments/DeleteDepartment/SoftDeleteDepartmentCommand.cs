@@ -1,5 +1,4 @@
-﻿using DirectoryService.Application.Abstractions.Commands;
-using DirectoryService.Application.Abstractions.Queries;
+﻿using SharedService.Core.Abstractions.Commands;
 
 namespace DirectoryService.Application.Departments.DeleteDepartment;
 

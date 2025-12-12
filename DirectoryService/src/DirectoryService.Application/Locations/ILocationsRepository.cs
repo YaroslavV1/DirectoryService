@@ -2,7 +2,7 @@
 using DirectoryService.Domain.Departments.ValueObjects;
 using DirectoryService.Domain.Locations;
 using DirectoryService.Domain.Locations.ValueObjects;
-using DirectoryService.Shared;
+using SharedService;
 
 namespace DirectoryService.Application.Locations;
 

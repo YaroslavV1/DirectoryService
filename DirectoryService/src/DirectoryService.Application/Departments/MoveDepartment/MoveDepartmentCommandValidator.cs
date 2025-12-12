@@ -1,6 +1,6 @@
-﻿using DirectoryService.Application.Validation;
-using DirectoryService.Shared;
-using FluentValidation;
+﻿using FluentValidation;
+using SharedService;
+using SharedService.Core.Validation;
 
 namespace DirectoryService.Application.Departments.MoveDepartment;
 

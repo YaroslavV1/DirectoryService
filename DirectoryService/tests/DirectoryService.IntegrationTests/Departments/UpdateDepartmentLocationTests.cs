@@ -3,7 +3,7 @@ using DirectoryService.Application.Departments.UpdateDepartmentLocations;
 using DirectoryService.Contracts.Departments.UpdateDepartmentLocations;
 using DirectoryService.Contracts.Locations.CreateLocation;
 using DirectoryService.Domain.Departments.ValueObjects;
-using DirectoryService.Shared;
+using SharedService;
 
 namespace DirectoryService.IntegrationTests.Departments;
 

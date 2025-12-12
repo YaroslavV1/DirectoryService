@@ -1,4 +1,4 @@
-﻿using DirectoryService.Presentation.Middlewares;
+﻿using SharedService.Framework.Middlewares;
 
 namespace DirectoryService.Presentation.Extensions;
 

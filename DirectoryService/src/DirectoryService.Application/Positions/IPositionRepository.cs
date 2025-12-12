@@ -1,7 +1,7 @@
 ﻿using CSharpFunctionalExtensions;
 using DirectoryService.Domain.Departments.ValueObjects;
 using DirectoryService.Domain.Positions;
-using DirectoryService.Shared;
+using SharedService;
 
 namespace DirectoryService.Application.Positions;
 

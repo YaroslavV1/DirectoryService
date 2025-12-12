@@ -1,5 +1,5 @@
-﻿using DirectoryService.Application.Abstractions.Queries;
-using DirectoryService.Contracts.Departments.GetDepartmentChildren;
+﻿using DirectoryService.Contracts.Departments.GetDepartmentChildren;
+using SharedService.Core.Abstractions.Queries;
 
 namespace DirectoryService.Application.Departments.GetDepartmentChildren;
 

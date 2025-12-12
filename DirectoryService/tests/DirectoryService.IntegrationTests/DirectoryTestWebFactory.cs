@@ -1,5 +1,4 @@
 ﻿using System.Data.Common;
-using DirectoryService.Application.Database;
 using DirectoryService.Infrastructure;
 using DirectoryService.Infrastructure.Database;
 using DirectoryService.Presentation;
@@ -10,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Npgsql;
 using Respawn;
+using SharedService.Core.Database;
 using Testcontainers.PostgreSql;
 
 namespace DirectoryService.IntegrationTests;

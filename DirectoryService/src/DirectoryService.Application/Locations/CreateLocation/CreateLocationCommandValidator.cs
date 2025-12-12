@@ -1,7 +1,7 @@
-﻿using DirectoryService.Application.Validation;
-using DirectoryService.Domain.Locations.ValueObjects;
-using DirectoryService.Shared;
+﻿using DirectoryService.Domain.Locations.ValueObjects;
 using FluentValidation;
+using SharedService;
+using SharedService.Core.Validation;
 
 namespace DirectoryService.Application.Locations.CreateLocation;
 

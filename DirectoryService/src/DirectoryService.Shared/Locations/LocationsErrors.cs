@@ -1,4 +1,6 @@
-﻿namespace DirectoryService.Shared.Locations;
+﻿using SharedService;
+
+namespace DirectoryService.Shared.Locations;
 
 public static class LocationsErrors
 {

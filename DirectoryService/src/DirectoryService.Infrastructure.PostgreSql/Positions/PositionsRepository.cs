@@ -3,11 +3,11 @@ using Dapper;
 using DirectoryService.Application.Positions;
 using DirectoryService.Domain.Departments.ValueObjects;
 using DirectoryService.Domain.Positions;
-using DirectoryService.Shared;
 using DirectoryService.Shared.Positions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Npgsql;
+using SharedService;
 
 namespace DirectoryService.Infrastructure.Positions;
 

@@ -1,4 +1,6 @@
-﻿namespace DirectoryService.Shared.Positions;
+﻿using SharedService;
+
+namespace DirectoryService.Shared.Positions;
 
 public static class PositionsErrors
 {
