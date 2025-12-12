@@ -4,11 +4,11 @@ using DirectoryService.Application.Locations;
 using DirectoryService.Domain.Departments.ValueObjects;
 using DirectoryService.Domain.Locations;
 using DirectoryService.Domain.Locations.ValueObjects;
-using DirectoryService.Shared;
 using DirectoryService.Shared.Locations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Npgsql;
+using SharedService;
 
 namespace DirectoryService.Infrastructure.Locations;
 

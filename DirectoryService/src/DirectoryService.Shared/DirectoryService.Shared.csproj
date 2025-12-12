@@ -6,4 +6,8 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <PackageReference Include="Learning.SharedKernel" Version="0.0.3" />
+    </ItemGroup>
+
 </Project>

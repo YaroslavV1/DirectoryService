@@ -2,12 +2,12 @@
 using System.Text.Json;
 using CSharpFunctionalExtensions;
 using Dapper;
-using DirectoryService.Application.Abstractions.Queries;
-using DirectoryService.Application.Caching;
-using DirectoryService.Application.Database;
 using DirectoryService.Contracts.Departments.GetDepartmentChildren;
-using DirectoryService.Shared;
 using Microsoft.Extensions.Caching.Distributed;
+using SharedService;
+using SharedService.Core.Abstractions.Queries;
+using SharedService.Core.Caching;
+using SharedService.Core.Database;
 
 namespace DirectoryService.Application.Departments.GetDepartmentChildren;
 

@@ -1,7 +1,7 @@
 ﻿using CSharpFunctionalExtensions;
 using DirectoryService.Application.Locations.GetLocations;
 using DirectoryService.Contracts.Locations.GetLocations;
-using DirectoryService.Shared;
+using SharedService;
 
 namespace DirectoryService.IntegrationTests.Locations;
 

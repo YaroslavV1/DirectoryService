@@ -1,7 +1,7 @@
-﻿using DirectoryService.Application.Validation;
-using DirectoryService.Domain.Departments.ValueObjects;
-using DirectoryService.Shared;
+﻿using DirectoryService.Domain.Departments.ValueObjects;
 using FluentValidation;
+using SharedService;
+using SharedService.Core.Validation;
 
 namespace DirectoryService.Application.Departments.CreateDepartment;
 

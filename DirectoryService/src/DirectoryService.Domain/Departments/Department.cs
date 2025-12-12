@@ -2,11 +2,11 @@
 using DirectoryService.Domain.DepartmentLocations;
 using DirectoryService.Domain.DepartmentPositions;
 using DirectoryService.Domain.Departments.ValueObjects;
-using DirectoryService.Shared;
+using SharedService;
 
 namespace DirectoryService.Domain.Departments;
 
-public sealed class Department : Shared.Entity<DepartmentId>
+public sealed class Department : SharedService.Entity<DepartmentId>
 {
     private readonly List<Department> _childrenDepartments = [];
     private readonly List<DepartmentPosition> _positions = [];

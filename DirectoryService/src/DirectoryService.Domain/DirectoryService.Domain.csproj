@@ -8,6 +8,7 @@
 
     <ItemGroup>
       <PackageReference Include="CSharpFunctionalExtensions" Version="3.6.0" />
+      <PackageReference Include="learning.sharedkernel" Version="0.0.3" />
     </ItemGroup>
 
     <ItemGroup>

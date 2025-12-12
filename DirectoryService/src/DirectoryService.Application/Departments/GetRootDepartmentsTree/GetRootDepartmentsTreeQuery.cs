@@ -1,5 +1,5 @@
-﻿using DirectoryService.Application.Abstractions.Queries;
-using DirectoryService.Contracts.Departments.GetRootDepartmentsTree;
+﻿using DirectoryService.Contracts.Departments.GetRootDepartmentsTree;
+using SharedService.Core.Abstractions.Queries;
 
 namespace DirectoryService.Application.Departments.GetRootDepartmentsTree;
 

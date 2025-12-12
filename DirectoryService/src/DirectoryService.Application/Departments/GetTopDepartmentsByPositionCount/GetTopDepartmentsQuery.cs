@@ -1,5 +1,5 @@
-﻿using DirectoryService.Application.Abstractions.Queries;
-using DirectoryService.Contracts.Departments.GetTopDepartments;
+﻿using DirectoryService.Contracts.Departments.GetTopDepartments;
+using SharedService.Core.Abstractions.Queries;
 
 namespace DirectoryService.Application.Departments.GetTopDepartmentsByPositionCount;
 

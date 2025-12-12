@@ -1,4 +1,6 @@
-﻿namespace DirectoryService.Shared.Departments;
+﻿using SharedService;
+
+namespace DirectoryService.Shared.Departments;
 
 public static class DepartmentsErrors
 {

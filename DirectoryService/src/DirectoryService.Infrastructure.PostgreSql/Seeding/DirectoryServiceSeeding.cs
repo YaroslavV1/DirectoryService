@@ -11,6 +11,7 @@ using DirectoryService.Domain.Positions;
 using DirectoryService.Domain.Positions.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using SharedService.Core.Database;
 
 namespace DirectoryService.Infrastructure.Seeding;
 

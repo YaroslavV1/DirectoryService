@@ -11,8 +11,8 @@ using DirectoryService.Domain.Locations.ValueObjects;
 using DirectoryService.Domain.Positions;
 using DirectoryService.Domain.Positions.ValueObjects;
 using DirectoryService.Infrastructure;
-using DirectoryService.Shared;
 using Microsoft.Extensions.DependencyInjection;
+using SharedService;
 
 namespace DirectoryService.IntegrationTests;
 

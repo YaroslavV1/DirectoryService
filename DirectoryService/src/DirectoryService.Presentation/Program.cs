@@ -2,24 +2,13 @@ using System.Text.Json.Serialization;
 using DirectoryService.Application.Database;
 using DirectoryService.Infrastructure;
 using DirectoryService.Infrastructure.Database;
-using DirectoryService.Infrastructure.Seeding;
 using DirectoryService.Presentation;
 using DirectoryService.Presentation.Extensions;
 using Microsoft.AspNetCore.Http.Json;
 using Serilog;
-using Serilog.Events;
+using SharedService.Core.Database;
 
 var builder = WebApplication.CreateBuilder(args);
-
-Log.Logger = new LoggerConfiguration()
-    .WriteTo.Debug()
-    .WriteTo.Console()
-    .WriteTo.Seq(builder.Configuration.GetConnectionString("Seq")
-                 ?? throw new ArgumentNullException("Seq"))
-    .MinimumLevel.Override("Microsoft.AspNetCore.Hosting", LogEventLevel.Warning)
-    .MinimumLevel.Override("Microsoft.AspNetCore.Mvc", LogEventLevel.Warning)
-    .MinimumLevel.Override("Microsoft.AspNetCore.Routing", LogEventLevel.Warning)
-    .CreateLogger();
 
 builder.Services.AddScoped<DirectoryServiceDbContext>(_ =>
     new DirectoryServiceDbContext(
@@ -35,8 +24,6 @@ builder.Services.AddSingleton<IDbConnectionFactory, NpgsqlConnectionFactory>(_ =
 Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
 
 builder.Services.AddProgramDependencies(builder.Configuration);
-
-builder.Services.AddSerilog();
 
 builder.Services.Configure<JsonOptions>(options =>
 {

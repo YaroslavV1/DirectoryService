@@ -1,5 +1,4 @@
-﻿using DirectoryService.Application.Departments.DeleteInactiveDepartment;
-using DirectoryService.Contracts.Locations.CreateLocation;
+﻿using DirectoryService.Contracts.Locations.CreateLocation;
 using DirectoryService.Contracts.Positions;
 using DirectoryService.Domain.Departments.ValueObjects;
 using Microsoft.EntityFrameworkCore;

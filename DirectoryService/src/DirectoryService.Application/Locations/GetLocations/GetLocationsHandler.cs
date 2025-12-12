@@ -1,10 +1,10 @@
 ﻿using System.Data;
 using CSharpFunctionalExtensions;
 using Dapper;
-using DirectoryService.Application.Abstractions.Queries;
-using DirectoryService.Application.Database;
 using DirectoryService.Contracts.Locations.GetLocations;
-using DirectoryService.Shared;
+using SharedService;
+using SharedService.Core.Abstractions.Queries;
+using SharedService.Core.Database;
 
 namespace DirectoryService.Application.Locations.GetLocations;
 

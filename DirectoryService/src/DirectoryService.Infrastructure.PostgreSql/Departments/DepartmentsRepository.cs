@@ -4,11 +4,11 @@ using Dapper;
 using DirectoryService.Application.Departments;
 using DirectoryService.Domain.Departments;
 using DirectoryService.Domain.Departments.ValueObjects;
-using DirectoryService.Shared;
 using DirectoryService.Shared.Departments;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Npgsql;
+using SharedService;
 
 namespace DirectoryService.Infrastructure.Departments;
 
